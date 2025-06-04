@@ -6,6 +6,7 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import SectionHeader from '../app/components/SectionHeader';
 import { Box, Card, CardMedia, CardContent, Typography } from '@mui/material';
+import { fetchAccommodations } from '@/services/api';
 
 interface Accommodation {
     id: number;
@@ -56,12 +57,12 @@ const AccommodationListCarousel: React.FC = () => {
     useEffect(() => {
         const getData = async () => {
             try {
-                // const result = await fetchAccommodations();
-                // if (result.data && result.data.length > 0) {
-                //     setAccommodations(result.data);
-                // } else {
-                //     setAccommodations(staticData);
-                // }
+                const result = await fetchAccommodations();
+                if (result.data && result.data.length > 0) {
+                    setAccommodations(result.data);
+                } else {
+                    setAccommodations(staticData);
+                }
                 setAccommodations(staticData);
             } catch (error) {
                 setAccommodations(staticData);
