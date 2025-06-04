@@ -60,6 +60,12 @@ interface Entertainment {
     averagePricePerAdult: number;
     imageUrl: string | null;
 }
+interface Restaurants {
+    id: number;
+    name: string;
+    averagePricePerAdult: number;
+    imageUrl: string | null;
+}
 interface RelatedTourismAreas {
     sameZone: TourismArea[];
     sameClass: TourismArea[];
@@ -87,7 +93,8 @@ const TourismAreaPage = ({ params }: { params: Promise<{ id: string }> }) => {
     const [selectedEntertainment, setSelectedEntertainment] = useState<number[]>([]);
     const [selectedTourismAreas, setSelectedTourismAreas] = useState<number[]>([]);
     const [mapPosition, setMapPosition] = useState<[number, number] | null>(null);
-
+    const [restaurants, setRestaurants] = useState<Restaurants[]>([]);
+    const [selectedRestaurants, setSelectedRestaurants] = useState<number[]>([]);
     const getCoordinatesFromAddress = async (address: string): Promise<[number, number] | null> => {
         try {
             const response = await axios.get(
@@ -112,12 +119,13 @@ const TourismAreaPage = ({ params }: { params: Promise<{ id: string }> }) => {
                 setTourismArea(tourismAreaData);
 
                 // جلب المناطق السياحية المرتبطة
-                const [entertainmentResponse, tourismAreasResponse, zoneResponse, classResponse, typeResponse] = await Promise.all([
+                const [entertainmentResponse, tourismAreasResponse, zoneResponse, classResponse, typeResponse, restaurantsResponse] = await Promise.all([
                     fetchEntertainment(tourismAreaData.zoneId),
                     fetchTourismArea(tourismAreaData.zoneId),
                     axios.get(`/api/tourism-area/zone/${tourismAreaData.zoneId}`),
                     axios.get(`/api/tourism-area/class/${classABCD[tourismAreaData.classType as keyof typeof classABCD]}`),
-                    axios.get(`/api/tourism-area/type/${tourismAreaData.tourismType}`)
+                    axios.get(`/api/tourism-area/type/${tourismAreaData.tourismType}`),
+                    axios.get(`/api/restaurants/zone/${tourismAreaData.zoneId}`)
                 ]);
                 setEntertainment(entertainmentResponse.data || []);
                 setTourismAreas(tourismAreasResponse.data || []);
@@ -126,7 +134,7 @@ const TourismAreaPage = ({ params }: { params: Promise<{ id: string }> }) => {
                     sameClass: classResponse.data.data.filter((e: TourismArea) => e.id !== tourismAreaData.id),
                     sameType: typeResponse.data.data.filter((e: TourismArea) => e.id !== tourismAreaData.id)
                 });
-
+                setRestaurants(restaurantsResponse.data);
                 // تحويل العنوان إلى إحداثيات
                 if (tourismAreaData.mapLink) {
                     const [lat, lng] = tourismAreaData.mapLink.split(',').map(Number);
@@ -214,7 +222,10 @@ const TourismAreaPage = ({ params }: { params: Promise<{ id: string }> }) => {
         }, 0) + selectedTourismAreas.reduce((total, id) => {
             const item = tourismAreas.find(t => t.id === id);
             return total + (item?.averagePricePerAdult || 0);
-        }, 0) + tourismArea.averagePricePerAdult;
+        }, 0) + tourismArea.averagePricePerAdult + selectedRestaurants.reduce((total, id) => {
+            const item = restaurants.find(r => r.id === id);
+            return total + (item?.averagePricePerAdult || 0);
+        }, 0);
     }
     return (
         <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -308,7 +319,42 @@ const TourismAreaPage = ({ params }: { params: Promise<{ id: string }> }) => {
                                                 {item.name} - {item.averagePricePerAdult} جنيه
                                             </Typography>
                                         </Box>
-                                        {item.name} - {item.averagePricePerAdult} جنيه
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        {/* خيارات المطاعم */}
+                        <Typography variant="h6" gutterBottom>
+                            أماكن المطاعم
+                        </Typography>
+                        <FormControl fullWidth sx={{ mb: 3 }}>
+                            <InputLabel>اختر أماكن المطاعم</InputLabel>
+                            <Select
+                                multiple
+                                value={selectedRestaurants}
+                                onChange={(e) => setSelectedRestaurants(e.target.value as number[])}
+                                renderValue={(selected) => (
+                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                        {selected.map((value) => (
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                <img src={restaurants.find(e => e.id === value)?.imageUrl || '/images/default.png'} alt={restaurants.find(e => e.id === value)?.name} className="w-[50px] h-[50px] rounded-md" />
+                                                <Chip
+                                                    key={value}
+                                                    label={restaurants.find(e => e.id === value)?.name + ' - ' + restaurants.find(e => e.id === value)?.averagePricePerAdult + ' جنيه'}
+                                                />
+                                            </Box>
+                                        ))}
+                                    </Box>
+                                )}
+                            >
+                                {restaurants.map((item) => (
+                                    <MenuItem key={item.id} value={item.id}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                            <img src={item.imageUrl || '/images/default.png'} alt={item.name} className="w-[50px] h-[50px] rounded-md" />
+                                            <Typography variant="body1">
+                                                {item.name} - {item.averagePricePerAdult} جنيه
+                                            </Typography>
+                                        </Box>
                                     </MenuItem>
                                 ))}
                             </Select>
@@ -455,6 +501,16 @@ const TourismAreaPage = ({ params }: { params: Promise<{ id: string }> }) => {
                             </Box>
                         )}
                         <Divider sx={{ my: 3 }} />
+                        {selectedRestaurants.length > 0 && (
+                            <Box sx={{ mb: 2 }}>
+                                <Typography variant="body1">
+                                    تكلفة المطاعم: {selectedRestaurants.reduce((total, id) => {
+                                        const item = restaurants.find(r => r.id === id);
+                                        return total + (item?.averagePricePerAdult || 0);
+                                    }, 0)} جنيه
+                                </Typography>
+                            </Box>
+                        )}
 
                         <Typography variant="h6" gutterBottom>
                             التكلفة الإجمالية: {calculateTotalPrice()} جنيه

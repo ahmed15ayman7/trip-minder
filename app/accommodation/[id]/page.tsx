@@ -26,7 +26,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import ChildCareIcon from '@mui/icons-material/ChildCare';
 import BedIcon from '@mui/icons-material/Bed';
 import GroupIcon from '@mui/icons-material/Group';
-import { fetchEntertainment, fetchTourismArea, classABCD, AccomodationTypes } from '@/services/api';
+import { fetchEntertainment, fetchTourismArea, classABCD, AccomodationTypes, fetchRestaurants } from '@/services/api';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -70,6 +70,13 @@ interface TourismArea {
     imageUrl: string | null;
 }
 
+interface Restaurants {
+    id: number;
+    name: string;
+    averagePricePerAdult: number;
+    imageUrl: string | null;
+}
+
 interface RelatedAccommodations {
     sameZone: Accommodation[];
     sameClass: Accommodation[];
@@ -82,8 +89,10 @@ const AccommodationPage = ({ params }: { params: Promise<{ id: string }> }) => {
     const [data, setData] = useState<Accommodation | null>(null);
     const [entertainment, setEntertainment] = useState<Entertainment[]>([]);
     const [tourismAreas, setTourismAreas] = useState<TourismArea[]>([]);
+    const [restaurants, setRestaurants] = useState<Restaurants[]>([]);
     const [selectedEntertainment, setSelectedEntertainment] = useState<number[]>([]);
     const [selectedTourismAreas, setSelectedTourismAreas] = useState<number[]>([]);
+    const [selectedRestaurants, setSelectedRestaurants] = useState<number[]>([]);
     const [loading, setLoading] = useState(true);
     const [relatedAccommodations, setRelatedAccommodations] = useState<RelatedAccommodations>({
         sameZone: [],
@@ -116,12 +125,13 @@ const AccommodationPage = ({ params }: { params: Promise<{ id: string }> }) => {
                 setData(response.data.data);
 
                 if (response.data.data) {
-                    const [entertainmentData, tourismData, zoneData, classData, typeData] = await Promise.all([
+                    const [entertainmentData, tourismData, zoneData, classData, typeData, restaurantsData] = await Promise.all([
                         fetchEntertainment(response.data.data.zoneId),
                         fetchTourismArea(response.data.data.zoneId),
                         axios.get(`/api/accommodation/zone/${response.data.data.zoneId}`),
                         axios.get(`/api/accommodation/class/${classABCD[response.data.data.classType as keyof typeof classABCD]}`),
-                        axios.get(`/api/accommodation/types/${AccomodationTypes[response.data.data.accomodationType as keyof typeof AccomodationTypes] || AccomodationTypes.Villa}`)
+                        axios.get(`/api/accommodation/types/${AccomodationTypes[response.data.data.accomodationType as keyof typeof AccomodationTypes] || AccomodationTypes.Villa}`),
+                        axios.get(`/api/restaurants/zone/${response.data.data.zoneId}`),
                     ]);
 
                     setEntertainment(entertainmentData.data || []);
@@ -131,7 +141,7 @@ const AccommodationPage = ({ params }: { params: Promise<{ id: string }> }) => {
                         sameClass: classData.data.data.filter((a: Accommodation) => a.id !== response.data.data.id),
                         sameType: typeData.data.data.filter((a: Accommodation) => a.id !== response.data.data.id)
                     });
-
+                    setRestaurants(restaurantsData.data || []);
                     // تحويل العنوان إلى إحداثيات
                     if (response.data.data.mapLink) {
                         const [lat, lng] = response.data.data.mapLink.split(',').map(Number);
@@ -167,7 +177,12 @@ const AccommodationPage = ({ params }: { params: Promise<{ id: string }> }) => {
             return total + (item?.averagePricePerAdult || 0);
         }, 0);
 
-        return accommodationPrice + entertainmentPrice + tourismPrice;
+        const restaurantsPrice = selectedRestaurants.reduce((total, id) => {
+            const item = restaurants.find(r => r.id === id);
+            return total + (item?.averagePricePerAdult || 0);
+        }, 0);
+
+        return accommodationPrice + entertainmentPrice + tourismPrice + restaurantsPrice;
     };
 
     const RelatedAccommodationsSection = ({ title, accommodations }: { title: string; accommodations: Accommodation[] }) => (
@@ -333,7 +348,43 @@ const AccommodationPage = ({ params }: { params: Promise<{ id: string }> }) => {
                                                 {item.name} - {item.averagePricePerAdult} جنيه
                                             </Typography>
                                         </Box>
-                                        {item.name} - {item.averagePricePerAdult} جنيه
+
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        {/* خيارات المطاعم */}
+                        <Typography variant="h6" gutterBottom>
+                            أماكن المطاعم
+                        </Typography>
+                        <FormControl fullWidth sx={{ mb: 3 }}>
+                            <InputLabel>اختر أماكن المطاعم</InputLabel>
+                            <Select
+                                multiple
+                                value={selectedRestaurants}
+                                onChange={(e) => setSelectedRestaurants(e.target.value as number[])}
+                                renderValue={(selected) => (
+                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                        {selected.map((value) => (
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                <img src={restaurants.find(e => e.id === value)?.imageUrl || '/images/default.png'} alt={restaurants.find(e => e.id === value)?.name} className="w-[50px] h-[50px] rounded-md" />
+                                                <Chip
+                                                    key={value}
+                                                    label={restaurants.find(e => e.id === value)?.name + ' - ' + restaurants.find(e => e.id === value)?.averagePricePerAdult + ' جنيه'}
+                                                />
+                                            </Box>
+                                        ))}
+                                    </Box>
+                                )}
+                            >
+                                {restaurants.map((item) => (
+                                    <MenuItem key={item.id} value={item.id}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                            <img src={item.imageUrl || '/images/default.png'} alt={item.name} className="w-[50px] h-[50px] rounded-md" />
+                                            <Typography variant="body1">
+                                                {item.name} - {item.averagePricePerAdult} جنيه
+                                            </Typography>
+                                        </Box>
                                     </MenuItem>
                                 ))}
                             </Select>
@@ -454,6 +505,17 @@ const AccommodationPage = ({ params }: { params: Promise<{ id: string }> }) => {
                         )}
 
                         <Divider sx={{ my: 2 }} />
+                        {selectedRestaurants.length > 0 && (
+                            <Box sx={{ mb: 2 }}>
+                                <Typography variant="body1">
+                                    تكلفة المطاعم: {selectedRestaurants.reduce((total, id) => {
+                                        const item = restaurants.find(r => r.id === id);
+                                        return total + (item?.averagePricePerAdult || 0);
+                                    }, 0)} جنيه
+                                </Typography>
+                            </Box>
+                        )}
+                        <Divider sx={{ my: 3 }} />
 
                         <Typography variant="h6" color="primary" gutterBottom>
                             التكلفة الإجمالية: {calculateTotalPrice()} جنيه

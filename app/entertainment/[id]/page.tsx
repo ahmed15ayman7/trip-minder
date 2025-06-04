@@ -58,6 +58,12 @@ interface TourismArea {
     averagePricePerAdult: number;
     imageUrl: string | null;
 }
+interface Restaurants {
+    id: number;
+    name: string;
+    averagePricePerAdult: number;
+    imageUrl: string | null;
+}
 interface RelatedEntertainments {
     sameZone: Entertainment[];
     sameClass: Entertainment[];
@@ -84,6 +90,8 @@ const EntertainmentPage = ({ params }: { params: Promise<{ id: string }> }) => {
     const [selectedEntertainment, setSelectedEntertainment] = useState<number[]>([]);
     const [selectedTourismAreas, setSelectedTourismAreas] = useState<number[]>([]);
     const [tourismAreas, setTourismAreas] = useState<TourismArea[]>([]);
+    const [restaurants, setRestaurants] = useState<Restaurants[]>([]);
+    const [selectedRestaurants, setSelectedRestaurants] = useState<number[]>([]);
     const getCoordinatesFromAddress = async (address: string): Promise<[number, number] | null> => {
         try {
             const response = await axios.get(
@@ -108,12 +116,13 @@ const EntertainmentPage = ({ params }: { params: Promise<{ id: string }> }) => {
                 setEntertainment(entertainmentData);
 
                 // جلب أماكن الترفيه المرتبطة
-                const [tourismAreasResponse, zoneResponse, classResponse, typeResponse] = await Promise.all([
+                const [tourismAreasResponse, zoneResponse, classResponse, typeResponse, restaurantsResponse] = await Promise.all([
                     // fetchEntertainment(entertainmentData.zoneId),
                     fetchTourismArea(entertainmentData.zoneId),
                     axios.get(`/api/entertainment/zone/${entertainmentData.zoneId}`),
                     axios.get(`/api/entertainment/class/${classABCD[entertainmentData.classType as keyof typeof classABCD]}`),
-                    axios.get(`/api/entertainment/type/${entertainmentData.entertainmentType}`)
+                    axios.get(`/api/entertainment/type/${entertainmentData.entertainmentType}`),
+                    axios.get(`/api/restaurants/zone/${entertainmentData.zoneId}`)
                 ]);
                 setRelatedEntertainments({
                     sameZone: zoneResponse.data.data.filter((e: Entertainment) => e.id !== entertainmentData.id),
@@ -121,7 +130,7 @@ const EntertainmentPage = ({ params }: { params: Promise<{ id: string }> }) => {
                     sameType: typeResponse.data.data.filter((e: Entertainment) => e.id !== entertainmentData.id)
                 });
                 setTourismAreas(tourismAreasResponse.data);
-
+                setRestaurants(restaurantsResponse.data);
                 // تحويل العنوان إلى إحداثيات
                 if (entertainmentData.mapLink) {
                     const [lat, lng] = entertainmentData.mapLink.split(',').map(Number);
@@ -209,7 +218,10 @@ const EntertainmentPage = ({ params }: { params: Promise<{ id: string }> }) => {
         }, 0) + selectedTourismAreas.reduce((total, id) => {
             const item = tourismAreas.find(t => t.id === id);
             return total + (item?.averagePricePerAdult || 0);
-        }, 0) + entertainment.averagePricePerAdult;
+        }, 0) + entertainment.averagePricePerAdult + selectedRestaurants.reduce((total, id) => {
+            const item = restaurants.find(r => r.id === id);
+            return total + (item?.averagePricePerAdult || 0);
+        }, 0);
     }
     return (
         <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -303,7 +315,42 @@ const EntertainmentPage = ({ params }: { params: Promise<{ id: string }> }) => {
                                                 {item.name} - {item.averagePricePerAdult} جنيه
                                             </Typography>
                                         </Box>
-                                        {item.name} - {item.averagePricePerAdult} جنيه
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        {/* خيارات المطاعم */}
+                        <Typography variant="h6" gutterBottom>
+                            أماكن المطاعم
+                        </Typography>
+                        <FormControl fullWidth sx={{ mb: 3 }}>
+                            <InputLabel>اختر أماكن المطاعم</InputLabel>
+                            <Select
+                                multiple
+                                value={selectedRestaurants}
+                                onChange={(e) => setSelectedRestaurants(e.target.value as number[])}
+                                renderValue={(selected) => (
+                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                        {selected.map((value, index) => (
+                                            <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                <img src={restaurants.find(e => e.id === value)?.imageUrl || '/images/default.png'} alt={restaurants.find(e => e.id === value)?.name} className="w-[50px] h-[50px] rounded-md" />
+                                                <Chip
+                                                    key={value}
+                                                    label={restaurants.find(e => e.id === value)?.name + ' - ' + restaurants.find(e => e.id === value)?.averagePricePerAdult + ' جنيه'}
+                                                />
+                                            </Box>
+                                        ))}
+                                    </Box>
+                                )}
+                            >
+                                {restaurants.map((item) => (
+                                    <MenuItem key={item.id} value={item.id}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                            <img src={item.imageUrl || '/images/default.png'} alt={item.name} className="w-[50px] h-[50px] rounded-md" />
+                                            <Typography variant="body1">
+                                                {item.name} - {item.averagePricePerAdult} جنيه
+                                            </Typography>
+                                        </Box>
                                     </MenuItem>
                                 ))}
                             </Select>
@@ -450,6 +497,17 @@ const EntertainmentPage = ({ params }: { params: Promise<{ id: string }> }) => {
                             </Box>
                         )}
 
+                        <Divider sx={{ my: 3 }} />
+                        {selectedRestaurants.length > 0 && (
+                            <Box sx={{ mb: 2 }}>
+                                <Typography variant="body1">
+                                    تكلفة المطاعم: {selectedRestaurants.reduce((total, id) => {
+                                        const item = restaurants.find(r => r.id === id);
+                                        return total + (item?.averagePricePerAdult || 0);
+                                    }, 0)} جنيه
+                                </Typography>
+                            </Box>
+                        )}
                         <Divider sx={{ my: 3 }} />
 
                         <Typography variant="h6" gutterBottom>
