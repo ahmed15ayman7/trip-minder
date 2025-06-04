@@ -124,13 +124,11 @@ const AccommodationListCarousel: React.FC = () => {
                             }}
                             onClick={() => handleCardClick(accommodation.id)}
                         >
-                            <CardMedia
-                                component="img"
-                                height="150"
-                                image={accommodation.imageUrl || defaultImage}
-                                alt={accommodation.name}
-                                sx={{ objectFit: 'cover', backgroundImage: `url(${accommodation.imageUrl || defaultImage})`, backgroundPosition: 'center', backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}
-                            />
+                            <div style={{
+                                width: '100%',
+                                height: '150px',
+                                objectFit: 'cover' as 'cover', backgroundImage: `url(${accommodation.imageUrl || defaultImage})`, backgroundPosition: 'center', backgroundSize: 'cover', backgroundRepeat: 'no-repeat'
+                            }} />
                             <CardContent>
                                 <Typography variant="h6" sx={{ color: '#ff6600', fontWeight: 'bold' }} gutterBottom noWrap>
                                     {accommodation.name}

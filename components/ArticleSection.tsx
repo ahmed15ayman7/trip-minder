@@ -37,7 +37,11 @@ const ArticleSection = () => {
                 {articles.map((article) => (
                     <div key={article.id} style={styles.card}>
                         <div style={styles.imageContainer}>
-                            <img src={article.image} alt={article.title} style={styles.image} />
+                            <div style={{
+                                width: '100%',
+                                height: '150px',
+                                objectFit: 'cover' as 'cover', backgroundImage: `url(${article.image})`, backgroundPosition: 'center', backgroundSize: 'cover', backgroundRepeat: 'no-repeat'
+                            }} />
                             <div style={styles.tag}>Trips</div>
                         </div>
                         <div style={styles.info}>

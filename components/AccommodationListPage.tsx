@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchAccommodations } from '../services/api';
 import { useRouter } from 'next/navigation';
+import defaultImage from '../assets/default.png';
 interface Accommodation {
     id: number;
     name: string;
@@ -56,7 +57,11 @@ const AccommodationList = () => {
                     {accommodations.slice(0, 12).map((accommodation: Accommodation) => (
                         <div key={accommodation.id} style={styles.card}>
                             <div style={styles.imageContainer}>
-                                <img src={accommodation.imageUrl || '/images/default.png'} alt={accommodation.name} style={styles.image} />
+                                <div style={{
+                                    width: '100%',
+                                    height: '150px',
+                                    objectFit: 'cover' as 'cover', backgroundImage: `url(${accommodation.imageUrl || defaultImage})`, backgroundPosition: 'center', backgroundSize: 'cover', backgroundRepeat: 'no-repeat'
+                                }} />
                                 <div style={styles.discountBadge}>20% OFF</div>
                             </div>
                             <div style={styles.info}>
