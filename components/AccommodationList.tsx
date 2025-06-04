@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import SectionHeader from '../app/components/SectionHeader';
+import { fetchAccommodations } from '@/services/api';
 
 export interface Accommodation {
     id: number;
@@ -20,7 +21,7 @@ export interface Accommodation {
     address: string;
     mapLink: string | null;
     contactLink: string;
-    imageSource: string | null;
+    imageUrl: string | null;
     numOfBeds: number;
     bedStatus: string;
     numOfPersons: number;
@@ -50,7 +51,7 @@ const staticData: Accommodation[] = [
         bedStatus: "متاح",
         numOfPersons: 2,
         score: 200,
-        imageSource: defaultImage,
+        imageUrl: defaultImage,
     },
     {
         id: 2,
@@ -73,7 +74,7 @@ const staticData: Accommodation[] = [
         bedStatus: "متاح",
         numOfPersons: 4,
         score: 120,
-        imageSource: defaultImage,
+        imageUrl: defaultImage,
     },
     {
         id: 3,
@@ -97,7 +98,7 @@ const staticData: Accommodation[] = [
         bedStatus: "متاح",
         numOfPersons: 2,
         score: 200,
-        imageSource: defaultImage,
+        imageUrl: defaultImage,
     },
     {
         id: 4,
@@ -121,7 +122,7 @@ const staticData: Accommodation[] = [
         bedStatus: "متاح",
         numOfPersons: 4,
         score: 120,
-        imageSource: defaultImage,
+        imageUrl: defaultImage,
     },
     // ... أضف حتى 5 عناصر افتراضية
 ];
@@ -134,13 +135,13 @@ const AccommodationList: React.FC = () => {
         const getData = async () => {
             try {
                 // استبدل هذا باستدعاء API الحقيقي إذا توفر
-                // const result = await fetchAccommodations();
-                // if (result.data && result.data.length > 0) {
-                //     setAccommodations(result.data);
-                // } else {
-                //     setAccommodations(staticData);
-                // }
-                setAccommodations(staticData); // بيانات افتراضية دائماً هنا
+                const result = await fetchAccommodations();
+                if (result.data && result.data.length > 0) {
+                    setAccommodations(result.data);
+                } else {
+                    setAccommodations(staticData);
+                }
+                // setAccommodations(staticData); // بيانات افتراضية دائماً هنا
             } catch (error) {
                 setAccommodations(staticData);
             }
@@ -160,11 +161,7 @@ const AccommodationList: React.FC = () => {
             <div style={styles.grid}>
                 {accommodations.slice(0, 5).map((accommodation) => (
                     <div key={accommodation.id} style={styles.card} onClick={() => handleCardClick(accommodation.id)}>
-                        <img
-                            src={accommodation.imageSource || defaultImage}
-                            alt={accommodation.name}
-                            style={styles.image}
-                        />
+                        <div style={{ ...styles.image, backgroundImage: `url(${accommodation.imageUrl || defaultImage})`, backgroundPosition: 'center', backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }} />
                         <div style={styles.info}>
                             <h3 style={styles.name}>{accommodation.name}</h3>
                             <p style={styles.description}>{accommodation.description}</p>

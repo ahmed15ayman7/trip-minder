@@ -18,9 +18,9 @@ const Carousel: React.FC = () => {
     };
 
     const destinationsD = [
-        { name: 'Giza', tours: '100+ Tours', image: '/images/giza.jpeg' },
-        { name: 'Alexandria', tours: '600+ Tours', image: '/images/alexandria.png' },
-        { name: 'Sinai', tours: '200+ Tours', image: '/images/sinai.jpeg' },
+        { name: 'Giza', tours: '100+ Tours', imageUrl: '/images/giza.jpeg' },
+        { name: 'Alexandria', tours: '600+ Tours', imageUrl: '/images/alexandria.png' },
+        { name: 'Sinai', tours: '200+ Tours', imageUrl: '/images/sinai.jpeg' },
     ];
     let [destinations, setDestinations] = useState<any[]>(destinationsD);
     useEffect(() => {
@@ -42,7 +42,7 @@ const Carousel: React.FC = () => {
             <Slider {...settings}>
                 {destinations.map((destination, index) => (
                     <div key={index} style={styles.slide}>
-                        <img src={destination.image} alt={destination.name} style={styles.image} />
+                        <img src={destination.imageUrl} alt={destination.name} style={styles.image} />
                         <h3 style={styles.destinationName}>{destination.name}</h3>
                         <p style={styles.tours}>{destination.tours}</p>
                     </div>

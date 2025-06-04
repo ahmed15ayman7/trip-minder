@@ -6,6 +6,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import PhoneIcon from '@mui/icons-material/Phone';
 import MapIcon from '@mui/icons-material/Map';
 import SectionHeader from '../app/components/SectionHeader';
+import { fetchRestaurants } from '@/services/api';
 
 interface Restaurant {
     id: number;
@@ -20,7 +21,7 @@ interface Restaurant {
     address: string;
     contactLink: string;
     description: string;
-    imageSource: string | null;
+    imageUrl: string | null;
     mapLink: string;
     rating: number;
     score: number;
@@ -41,7 +42,7 @@ const staticData: Restaurant[] = [
         address: 'شارع النيل، الزمالك، القاهرة',
         contactLink: '',
         description: 'أشهر الأكلات المصرية في أجواء تراثية.',
-        imageSource: defaultImage,
+        imageUrl: defaultImage,
         mapLink: '',
         rating: 4.7,
         score: 250,
@@ -59,7 +60,7 @@ const staticData: Restaurant[] = [
         address: 'برج القاهرة، الجزيرة، القاهرة',
         contactLink: '',
         description: 'إطلالة بانورامية على القاهرة مع أطباق عالمية.',
-        imageSource: defaultImage,
+        imageUrl: defaultImage,
         mapLink: '',
         rating: 4.8,
         score: 180,
@@ -77,7 +78,7 @@ const staticData: Restaurant[] = [
         address: 'كورنيش الإسكندرية، الإسكندرية',
         contactLink: '',
         description: 'أفضل المأكولات البحرية الطازجة.',
-        imageSource: defaultImage,
+        imageUrl: defaultImage,
         mapLink: '',
         rating: 4.6,
         score: 140,
@@ -92,12 +93,12 @@ const RestaurantList: React.FC = () => {
     useEffect(() => {
         const getData = async () => {
             try {
-                // const result = await fetchRestaurants();
-                // if (result.data && result.data.length > 0) {
-                //     setRestaurants(result.data);
-                // } else {
-                //     setRestaurants(staticData);
-                // }
+                const result = await fetchRestaurants();
+                if (result.data && result.data.length > 0) {
+                    setRestaurants(result.data);
+                } else {
+                    setRestaurants(staticData);
+                }
                 setRestaurants(staticData);
             } catch (error) {
                 setRestaurants(staticData);
@@ -120,11 +121,7 @@ const RestaurantList: React.FC = () => {
                 {restaurants.slice(0, 5).map((restaurant) => (
                     <div key={restaurant.id} style={styles.card} onClick={() => handleCardClick(restaurant.id)}>
                         <div style={styles.imageContainer}>
-                            <img
-                                src={restaurant.imageSource || defaultImage}
-                                alt={restaurant.name}
-                                style={styles.image}
-                            />
+                            <div style={{ ...styles.image, backgroundImage: `url(${restaurant.imageUrl || defaultImage})`, backgroundPosition: 'center', backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }} />
                             {restaurant.hasKidsArea && (
                                 <Chip
                                     label="منطقة أطفال"

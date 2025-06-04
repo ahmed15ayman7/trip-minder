@@ -22,7 +22,7 @@ export interface TourismArea {
     address: string;
     mapLink: string | null;
     contactLink: string | null;
-    imageSource: string | null;
+    imageUrl: string | null;
     placeType: "Tourism Area";
     score: number;
 }
@@ -45,7 +45,7 @@ const staticData: TourismArea[] = [
         address: 'الجيزة',
         mapLink: null,
         contactLink: null,
-        imageSource: defaultImage,
+        imageUrl: defaultImage,
         placeType: 'Tourism Area',
         score: 300,
     },
@@ -65,7 +65,7 @@ const staticData: TourismArea[] = [
         address: 'سيوة',
         mapLink: null,
         contactLink: null,
-        imageSource: defaultImage,
+        imageUrl: defaultImage,
         placeType: 'Tourism Area',
         score: 120,
     },
@@ -85,7 +85,7 @@ const staticData: TourismArea[] = [
         address: 'الجيزة',
         mapLink: null,
         contactLink: null,
-        imageSource: defaultImage,
+        imageUrl: defaultImage,
         placeType: 'Tourism Area',
         score: 300,
     },
@@ -105,7 +105,7 @@ const staticData: TourismArea[] = [
         address: 'الجيزة',
         mapLink: null,
         contactLink: null,
-        imageSource: defaultImage,
+        imageUrl: defaultImage,
         placeType: 'Tourism Area',
         score: 300,
     },
@@ -164,7 +164,7 @@ const TourismAreaCarousel = () => {
                             <CardMedia
                                 component="img"
                                 height="200"
-                                image={area.imageSource || defaultImage}
+                                image={area.imageUrl || defaultImage}
                                 alt={area.name}
                                 sx={{ objectFit: 'cover' }}
                             />

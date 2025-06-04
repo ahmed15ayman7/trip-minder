@@ -76,13 +76,13 @@ interface Accommodation {
     averagePricePerAdult: number;
     hasKidsArea: boolean;
     numOfBeds: number;
-    numOfMembers: number;
+    numOfPersons: number;
     tripSuggestionId: number;
     address: string;
     bedStatus: string | null;
     contactLink: string | null;
     description: string | null;
-    imageSource: string | null;
+    imageUrl: string | null;
     mapLink: string | null;
     rating: number;
     score: number;
@@ -127,7 +127,7 @@ let accommodation: Accommodation[] = [
         classId: 1,
         hasKidsArea: false,
         bedStatus: 'متاح',
-        address: 'القاهرة الجديدة', mapLink: null, contactLink: null, imageSource: null, score: 4.5, numOfBeds: 1, numOfMembers: 1, tripSuggestionId: 1,
+        address: 'القاهرة الجديدة', mapLink: null, contactLink: null, imageUrl: null, score: 4.5, numOfBeds: 1, numOfPersons: 1, tripSuggestionId: 1,
     },
     {
         id: 2, name: 'القاهرة الجديدة',
@@ -143,10 +143,10 @@ let accommodation: Accommodation[] = [
         address: 'القاهرة الجديدة',
         mapLink: null,
         contactLink: null,
-        imageSource: null,
+        imageUrl: null,
         score: 4.5,
         numOfBeds: 1,
-        numOfMembers: 1,
+        numOfPersons: 1,
         tripSuggestionId: 1,
     },
     {
@@ -163,10 +163,10 @@ let accommodation: Accommodation[] = [
         address: 'القاهرة الجديدة',
         mapLink: null,
         contactLink: null,
-        imageSource: null,
+        imageUrl: null,
         score: 4.5,
         numOfBeds: 1,
-        numOfMembers: 1,
+        numOfPersons: 1,
         tripSuggestionId: 1,
     }
 ]
@@ -197,6 +197,7 @@ export default function AccommodationPage() {
         const getData = async () => {
             try {
                 const result = await fetchAccommodations();
+                console.log(result.data);
                 if (result.data && result.data.length > 0) {
                     setAccommodations(result.data);
                 }
@@ -206,7 +207,7 @@ export default function AccommodationPage() {
         };
         const getZones = async () => {
             const result = await fetchZones();
-            setZones(result.data);
+            setZones(result);
         };
         getData();
         getZones();
@@ -232,13 +233,14 @@ export default function AccommodationPage() {
             accommodation.averagePricePerAdult <= filters.maxPrice;
         const matchesBeds = accommodation.numOfBeds >= filters.minBeds &&
             accommodation.numOfBeds <= filters.maxBeds;
-        const matchesMembers = accommodation.numOfMembers >= filters.minMembers &&
-            accommodation.numOfMembers <= filters.maxMembers;
+        const matchesMembers = accommodation.numOfPersons >= filters.minMembers &&
+            accommodation.numOfPersons <= filters.maxMembers;
 
-        return matchesSearch && matchesZone && matchesType && matchesClass &&
-            matchesKidsArea && matchesPrice && matchesBeds && matchesMembers;
+        return matchesSearch && matchesZone && matchesType && matchesClass
+            && matchesKidsArea
+            && matchesPrice && matchesBeds && matchesMembers;
     });
-    console.log(filters, filteredAccommodations);
+    // console.log(filters, filteredAccommodations);
 
     const FilterDrawer = () => (
         <Drawer
@@ -479,7 +481,7 @@ export default function AccommodationPage() {
                             >
                                 <Box sx={{ position: 'relative' }}>
                                     <img
-                                        src={accommodation.imageSource || defaultImage}
+                                        src={accommodation.imageUrl || defaultImage}
                                         alt={accommodation.name}
                                         style={{
                                             width: '100%',
@@ -541,7 +543,7 @@ export default function AccommodationPage() {
                                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                             <GroupIcon fontSize="small" sx={{ mr: 0.5, color: '#666' }} />
                                             <Typography variant="body2" color="text.secondary">
-                                                {accommodation.numOfMembers} فرد
+                                                {accommodation.numOfPersons} فرد
                                             </Typography>
                                         </Box>
                                     </Box>

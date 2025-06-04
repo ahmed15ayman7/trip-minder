@@ -14,7 +14,7 @@ interface Accommodation {
     averagePricePerAdult: number;
     description: string;
     address: string;
-    imageSource: string | null;
+    imageUrl: string | null;
 }
 
 const defaultImage = '/images/default.png';
@@ -26,7 +26,7 @@ const staticData: Accommodation[] = [
         averagePricePerAdult: 350,
         description: "إقامة فاخرة وإطلالة رائعة على النيل.",
         address: "كورنيش النيل، القاهرة",
-        imageSource: defaultImage,
+        imageUrl: defaultImage,
     },
     {
         id: 2,
@@ -35,7 +35,7 @@ const staticData: Accommodation[] = [
         averagePricePerAdult: 250,
         description: "شاليه بإطلالة مباشرة على البحر.",
         address: "الغردقة، البحر الأحمر",
-        imageSource: defaultImage,
+        imageUrl: defaultImage,
     },
     {
         id: 3,
@@ -44,7 +44,7 @@ const staticData: Accommodation[] = [
         averagePricePerAdult: 350,
         description: "إقامة فاخرة وإطلالة رائعة على النيل.",
         address: "كورنيش النيل، القاهرة",
-        imageSource: defaultImage,
+        imageUrl: defaultImage,
     },
     // ... أضف حتى 12 عنصر افتراضي
 ];
@@ -127,9 +127,9 @@ const AccommodationListCarousel: React.FC = () => {
                             <CardMedia
                                 component="img"
                                 height="150"
-                                image={accommodation.imageSource || defaultImage}
+                                image={accommodation.imageUrl || defaultImage}
                                 alt={accommodation.name}
-                                sx={{ objectFit: 'cover' }}
+                                sx={{ objectFit: 'cover', backgroundImage: `url(${accommodation.imageUrl || defaultImage})`, backgroundPosition: 'center', backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}
                             />
                             <CardContent>
                                 <Typography variant="h6" sx={{ color: '#ff6600', fontWeight: 'bold' }} gutterBottom noWrap>

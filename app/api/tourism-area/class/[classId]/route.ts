@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server';
 export async function GET(request: Request, { params }: { params: Promise<{ classId: string }> }) {
     const { classId } = await params;
     try {
-        const response = await axios.get(baseUrl + `Api/v1/tourism-area/class/${classId}`);
+        const response = await axios.get(baseUrl + `Api/v1/tourismarea/class/${classId}`);
         return NextResponse.json(response.data);
     } catch (error: any) {
         console.error('Error fetching class tourism areas:', error.message);

@@ -12,7 +12,7 @@ export async function GET(request: Request) {
     const maxPrice = searchParams.get('maxPrice');
 
     try {
-        let url = baseUrl + 'Api/v1/tourism-area/list';
+        let url = baseUrl + 'Api/v1/tourismarea/list';
 
         // إضافة الفلاتر إلى URL
         if (zoneId) url += `?zoneId=${zoneId}`;

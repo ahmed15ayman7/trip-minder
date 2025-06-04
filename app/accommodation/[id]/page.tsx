@@ -48,7 +48,7 @@ export interface Accommodation {
     address: string;
     mapLink: string | null;
     contactLink: string;
-    imageSource: string | null;
+    imageUrl: string | null;
     numOfBeds: number;
     bedStatus: string;
     numOfPersons: number;
@@ -59,14 +59,14 @@ interface Entertainment {
     id: number;
     name: string;
     averagePricePerAdult: number;
-    imageSource: string | null;
+    imageUrl: string | null;
 }
 
 interface TourismArea {
     id: number;
     name: string;
     averagePricePerAdult: number;
-    imageSource: string | null;
+    imageUrl: string | null;
 }
 
 interface RelatedAccommodations {
@@ -181,7 +181,7 @@ const AccommodationPage = ({ params }: { params: Promise<{ id: string }> }) => {
                             <CardMedia
                                 component="img"
                                 height="140"
-                                image={accommodation.imageSource || '/images/default.png'}
+                                image={accommodation.imageUrl || '/images/default.png'}
                                 alt={accommodation.name}
                             />
                             <CardContent>
@@ -238,7 +238,7 @@ const AccommodationPage = ({ params }: { params: Promise<{ id: string }> }) => {
                     <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
                         <Box sx={{ position: 'relative', mb: 3 }}>
                             <img
-                                src={data.imageSource || '/images/default.png'}
+                                src={data.imageUrl || '/images/default.png'}
                                 alt={data.name}
                                 style={{
                                     width: '100%',
@@ -315,7 +315,7 @@ const AccommodationPage = ({ params }: { params: Promise<{ id: string }> }) => {
                                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                         {selected.map((value) => (
                                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                <img src={entertainment.find(e => e.id === value)?.imageSource || '/images/default.png'} alt={entertainment.find(e => e.id === value)?.name} className="w-[50px] h-[50px] rounded-md" />
+                                                <img src={entertainment.find(e => e.id === value)?.imageUrl || '/images/default.png'} alt={entertainment.find(e => e.id === value)?.name} className="w-[50px] h-[50px] rounded-md" />
                                                 <Chip
                                                     key={value}
                                                     label={entertainment.find(e => e.id === value)?.name + ' - ' + entertainment.find(e => e.id === value)?.averagePricePerAdult + ' جنيه'}
@@ -328,7 +328,7 @@ const AccommodationPage = ({ params }: { params: Promise<{ id: string }> }) => {
                                 {entertainment.map((item) => (
                                     <MenuItem key={item.id} value={item.id}>
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                            <img src={item.imageSource || '/images/default.png'} alt={item.name} className="w-[50px] h-[50px] rounded-md" />
+                                            <img src={item.imageUrl || '/images/default.png'} alt={item.name} className="w-[50px] h-[50px] rounded-md" />
                                             <Typography variant="body1">
                                                 {item.name} - {item.averagePricePerAdult} جنيه
                                             </Typography>
@@ -353,7 +353,7 @@ const AccommodationPage = ({ params }: { params: Promise<{ id: string }> }) => {
                                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                         {selected.map((value) => (
                                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                <img src={tourismAreas.find(e => e.id === value)?.imageSource || '/images/default.png'} alt={entertainment.find(e => e.id === value)?.name} className="w-[50px] h-[50px] rounded-md" />
+                                                <img src={tourismAreas.find(e => e.id === value)?.imageUrl || '/images/default.png'} alt={entertainment.find(e => e.id === value)?.name} className="w-[50px] h-[50px] rounded-md" />
                                                 <Chip
                                                     key={value}
                                                     label={tourismAreas.find(e => e.id === value)?.name + ' - ' + tourismAreas.find(e => e.id === value)?.averagePricePerAdult + ' جنيه'}
@@ -365,7 +365,7 @@ const AccommodationPage = ({ params }: { params: Promise<{ id: string }> }) => {
                             >
                                 {tourismAreas.map((item) => (
                                     <MenuItem key={item.id} value={item.id}>
-                                        <img src={item.imageSource || '/images/default.png'} alt={item.name} className="w-[50px] h-[50px] rounded-md" />
+                                        <img src={item.imageUrl || '/images/default.png'} alt={item.name} className="w-[50px] h-[50px] rounded-md" />
                                         {item.name} - {item.averagePricePerAdult} جنيه
                                     </MenuItem>
                                 ))}

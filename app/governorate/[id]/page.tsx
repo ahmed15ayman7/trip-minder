@@ -15,28 +15,28 @@ interface Governorate {
 interface Accommodation {
     id: number;
     name: string;
-    imageSource: string | null;
+    imageUrl: string | null;
     averagePricePerAdult: number;
     description: string;
 }
 interface Restaurant {
     id: number;
     name: string;
-    imageSource: string | null;
+    imageUrl: string | null;
     averagePricePerAdult: number;
     description: string;
 }
 interface Entertainment {
     id: number;
     name: string;
-    imageSource: string | null;
+    imageUrl: string | null;
     averagePricePerAdult: number;
     description: string;
 }
 interface TourismArea {
     id: number;
     name: string;
-    imageSource: string | null;
+    imageUrl: string | null;
     averagePricePerAdult: number;
     description: string;
 }
@@ -84,7 +84,7 @@ const SectionCarousel = ({ title, items, onSeeAll, type }: { title: string, item
                                 onClick={() => window.location.href = `/${type}/${item.id}`}
                             >
                                 <img
-                                    src={item.imageSource || defaultImage}
+                                    src={item.imageUrl || defaultImage}
                                     alt={item.name}
                                     style={{ width: '100%', height: 150, objectFit: 'cover', borderTopLeftRadius: 8, borderTopRightRadius: 8 }}
                                 />
@@ -150,47 +150,47 @@ const GovernorateDetailsPage = ({ params }: { params: Promise<{ id: string }> })
                 const accRes = await fetch(`/api/accommodation/governorate/${id}`);
                 const accData = await accRes.json();
                 setAccommodations(accData.data && accData.data.length > 0 ? accData.data : [
-                    { id: 1, name: 'فندق النيل', imageSource: defaultImage, averagePricePerAdult: 350, description: 'فندق فاخر على النيل.' },
-                    { id: 2, name: 'شاليه البحر', imageSource: defaultImage, averagePricePerAdult: 250, description: 'شاليه بإطلالة بحرية.' },
+                    { id: 1, name: 'فندق النيل', imageUrl: defaultImage, averagePricePerAdult: 350, description: 'فندق فاخر على النيل.' },
+                    { id: 2, name: 'شاليه البحر', imageUrl: defaultImage, averagePricePerAdult: 250, description: 'شاليه بإطلالة بحرية.' },
                 ]);
                 // Restaurants
                 const restRes = await fetch(`/api/restaurant/governorate/${id}`);
                 const restData = await restRes.json();
                 setRestaurants(restData.data && restData.data.length > 0 ? restData.data : [
-                    { id: 1, name: 'مطعم أبو السيد', imageSource: defaultImage, averagePricePerAdult: 120, description: 'أشهر الأكلات المصرية.' },
-                    { id: 2, name: 'مطعم الدوار', imageSource: defaultImage, averagePricePerAdult: 200, description: 'إطلالة بانورامية.' },
+                    { id: 1, name: 'مطعم أبو السيد', imageUrl: defaultImage, averagePricePerAdult: 120, description: 'أشهر الأكلات المصرية.' },
+                    { id: 2, name: 'مطعم الدوار', imageUrl: defaultImage, averagePricePerAdult: 200, description: 'إطلالة بانورامية.' },
                 ]);
                 // Entertainments
                 const entRes = await fetch(`/api/entertainment/governorate/${id}`);
                 const entData = await entRes.json();
                 setEntertainments(entData.data && entData.data.length > 0 ? entData.data : [
-                    { id: 1, name: 'مدينة الملاهي', imageSource: defaultImage, averagePricePerAdult: 100, description: 'أفضل مدينة ملاهي.' },
-                    { id: 2, name: 'مركز الألعاب', imageSource: defaultImage, averagePricePerAdult: 80, description: 'ألعاب إلكترونية.' },
+                    { id: 1, name: 'مدينة الملاهي', imageUrl: defaultImage, averagePricePerAdult: 100, description: 'أفضل مدينة ملاهي.' },
+                    { id: 2, name: 'مركز الألعاب', imageUrl: defaultImage, averagePricePerAdult: 80, description: 'ألعاب إلكترونية.' },
                 ]);
                 // Tourism Areas
                 const tourRes = await fetch(`/api/tourism-area/governorate/${id}`);
                 const tourData = await tourRes.json();
                 setTourismAreas(tourData.data && tourData.data.length > 0 ? tourData.data : [
-                    { id: 1, name: 'منطقة الأهرامات', imageSource: defaultImage, averagePricePerAdult: 200, description: 'زيارة الأهرامات.' },
-                    { id: 2, name: 'واحة سيوة', imageSource: defaultImage, averagePricePerAdult: 180, description: 'جمال الطبيعة.' },
+                    { id: 1, name: 'منطقة الأهرامات', imageUrl: defaultImage, averagePricePerAdult: 200, description: 'زيارة الأهرامات.' },
+                    { id: 2, name: 'واحة سيوة', imageUrl: defaultImage, averagePricePerAdult: 180, description: 'جمال الطبيعة.' },
                 ]);
             } catch (error) {
                 setGovernorate({ id: 0, name: 'محافظة افتراضية', description: 'وصف افتراضي للمحافظة.' });
                 setAccommodations([
-                    { id: 1, name: 'فندق النيل', imageSource: defaultImage, averagePricePerAdult: 350, description: 'فندق فاخر على النيل.' },
-                    { id: 2, name: 'شاليه البحر', imageSource: defaultImage, averagePricePerAdult: 250, description: 'شاليه بإطلالة بحرية.' },
+                    { id: 1, name: 'فندق النيل', imageUrl: defaultImage, averagePricePerAdult: 350, description: 'فندق فاخر على النيل.' },
+                    { id: 2, name: 'شاليه البحر', imageUrl: defaultImage, averagePricePerAdult: 250, description: 'شاليه بإطلالة بحرية.' },
                 ]);
                 setRestaurants([
-                    { id: 1, name: 'مطعم أبو السيد', imageSource: defaultImage, averagePricePerAdult: 120, description: 'أشهر الأكلات المصرية.' },
-                    { id: 2, name: 'مطعم الدوار', imageSource: defaultImage, averagePricePerAdult: 200, description: 'إطلالة بانورامية.' },
+                    { id: 1, name: 'مطعم أبو السيد', imageUrl: defaultImage, averagePricePerAdult: 120, description: 'أشهر الأكلات المصرية.' },
+                    { id: 2, name: 'مطعم الدوار', imageUrl: defaultImage, averagePricePerAdult: 200, description: 'إطلالة بانورامية.' },
                 ]);
                 setEntertainments([
-                    { id: 1, name: 'مدينة الملاهي', imageSource: defaultImage, averagePricePerAdult: 100, description: 'أفضل مدينة ملاهي.' },
-                    { id: 2, name: 'مركز الألعاب', imageSource: defaultImage, averagePricePerAdult: 80, description: 'ألعاب إلكترونية.' },
+                    { id: 1, name: 'مدينة الملاهي', imageUrl: defaultImage, averagePricePerAdult: 100, description: 'أفضل مدينة ملاهي.' },
+                    { id: 2, name: 'مركز الألعاب', imageUrl: defaultImage, averagePricePerAdult: 80, description: 'ألعاب إلكترونية.' },
                 ]);
                 setTourismAreas([
-                    { id: 1, name: 'منطقة الأهرامات', imageSource: defaultImage, averagePricePerAdult: 200, description: 'زيارة الأهرامات.' },
-                    { id: 2, name: 'واحة سيوة', imageSource: defaultImage, averagePricePerAdult: 180, description: 'جمال الطبيعة.' },
+                    { id: 1, name: 'منطقة الأهرامات', imageUrl: defaultImage, averagePricePerAdult: 200, description: 'زيارة الأهرامات.' },
+                    { id: 2, name: 'واحة سيوة', imageUrl: defaultImage, averagePricePerAdult: 180, description: 'جمال الطبيعة.' },
                 ]);
             } finally {
                 setLoading(false);

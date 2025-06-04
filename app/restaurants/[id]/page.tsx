@@ -41,7 +41,7 @@ export interface Restaurant {
     address: string;
     mapLink: string | null;
     contactLink: string;
-    imageSource: string | null;
+    imageUrl: string | null;
     score: number;
 }
 
@@ -101,7 +101,7 @@ const RestaurantPage = ({ params }: { params: Promise<{ id: string }> }) => {
                             <CardMedia
                                 component="img"
                                 height="140"
-                                image={restaurant.imageSource || defaultImage}
+                                image={restaurant.imageUrl || defaultImage}
                                 alt={restaurant.name}
                             />
                             <CardContent>
@@ -158,7 +158,7 @@ const RestaurantPage = ({ params }: { params: Promise<{ id: string }> }) => {
                     <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
                         <Box sx={{ position: 'relative', mb: 3 }}>
                             <img
-                                src={restaurant.imageSource || defaultImage}
+                                src={restaurant.imageUrl || defaultImage}
                                 alt={restaurant.name}
                                 style={{
                                     width: '100%',

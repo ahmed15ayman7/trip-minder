@@ -85,7 +85,7 @@ interface Restaurant {
     address: string;
     contactLink: string;
     description: string;
-    imageSource: string | null;
+    imageUrl: string | null;
     mapLink: string;
     rating: number;
     score: number;
@@ -116,9 +116,9 @@ interface Filters {
 }
 const defaultImage = 'https://upload.wikimedia.org/wikipedia/commons/6/62/Barbieri_-_ViaSophia25668.jpg';
 let restaurantsD: Restaurant[] = [
-    { id: 1, name: 'مطعم 1', description: 'مطعم 1', imageSource: defaultImage, rating: 4.5, score: 4.5, zoneId: 1, foodCategoryId: 1, classId: 1, hasKidsArea: true, placeTypeId: 1, averagePricePerAdult: 100, tripSuggestionId: 1, address: 'القاهرة', contactLink: 'https://via.placeholder.com/150', mapLink: 'https://via.placeholder.com/150' },
-    { id: 2, name: 'مطعم 2', description: 'مطعم 2', imageSource: defaultImage, rating: 4.5, score: 4.5, zoneId: 1, foodCategoryId: 1, classId: 1, hasKidsArea: true, placeTypeId: 1, averagePricePerAdult: 100, tripSuggestionId: 1, address: 'القاهرة', contactLink: 'https://via.placeholder.com/150', mapLink: 'https://via.placeholder.com/150' },
-    { id: 3, name: 'مطعم 3', description: 'مطعم 3', imageSource: defaultImage, rating: 4.5, score: 4.5, zoneId: 1, foodCategoryId: 1, classId: 1, hasKidsArea: true, placeTypeId: 1, averagePricePerAdult: 100, tripSuggestionId: 1, address: 'القاهرة', contactLink: 'https://via.placeholder.com/150', mapLink: 'https://via.placeholder.com/150' },
+    { id: 1, name: 'مطعم 1', description: 'مطعم 1', imageUrl: defaultImage, rating: 4.5, score: 4.5, zoneId: 1, foodCategoryId: 1, classId: 1, hasKidsArea: true, placeTypeId: 1, averagePricePerAdult: 100, tripSuggestionId: 1, address: 'القاهرة', contactLink: 'https://via.placeholder.com/150', mapLink: 'https://via.placeholder.com/150' },
+    { id: 2, name: 'مطعم 2', description: 'مطعم 2', imageUrl: defaultImage, rating: 4.5, score: 4.5, zoneId: 1, foodCategoryId: 1, classId: 1, hasKidsArea: true, placeTypeId: 1, averagePricePerAdult: 100, tripSuggestionId: 1, address: 'القاهرة', contactLink: 'https://via.placeholder.com/150', mapLink: 'https://via.placeholder.com/150' },
+    { id: 3, name: 'مطعم 3', description: 'مطعم 3', imageUrl: defaultImage, rating: 4.5, score: 4.5, zoneId: 1, foodCategoryId: 1, classId: 1, hasKidsArea: true, placeTypeId: 1, averagePricePerAdult: 100, tripSuggestionId: 1, address: 'القاهرة', contactLink: 'https://via.placeholder.com/150', mapLink: 'https://via.placeholder.com/150' },
 ];
 
 export default function RestaurantsPage() {
@@ -146,6 +146,7 @@ export default function RestaurantsPage() {
                 if (result.data && result.data.length > 0) {
                     setRestaurants(result.data);
                 }
+                console.log(result);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -163,7 +164,8 @@ export default function RestaurantsPage() {
 
     const getZones = async () => {
         const result = await fetchZones();
-        setZones(result.data);
+        // console.log(result);
+        setZones(result);
     };
 
     const filteredRestaurants = restaurants.filter(restaurant => {
@@ -384,7 +386,7 @@ export default function RestaurantsPage() {
                             >
                                 <Box sx={{ position: 'relative' }}>
                                     <img
-                                        src={restaurant.imageSource || defaultImage}
+                                        src={restaurant.imageUrl || defaultImage}
                                         alt={restaurant.name}
                                         style={{
                                             width: '100%',

@@ -93,7 +93,7 @@ export interface TourismArea {
     address: string;
     mapLink: string | null;
     contactLink: string | null;
-    imageSource: string | null;
+    imageUrl: string | null;
     placeType: "Tourism Area";
     score: number;
 }
@@ -127,9 +127,9 @@ interface Filters {
     maxPrice: number;
 }
 let tourismArea: TourismArea[] = [
-    { id: 1, name: 'القاهرة الجديدة', description: 'القاهرة الجديدة', classType: 'A', zone: 'القاهرة الجديدة', zoneId: 1, governorate: 'القاهرة', governorateId: 1, rating: 4.5, averagePricePerAdult: 1000, tourismType: 'منطقة تاريخية', hasKidsArea: true, address: 'القاهرة الجديدة', mapLink: null, contactLink: null, imageSource: null, placeType: 'Tourism Area', score: 4.5 },
-    { id: 2, name: 'القاهرة القديمة', description: 'القاهرة القديمة', classType: 'A', zone: 'القاهرة القديمة', zoneId: 1, governorate: 'القاهرة', governorateId: 1, rating: 4.5, averagePricePerAdult: 1000, tourismType: 'منطقة تاريخية', hasKidsArea: true, address: 'القاهرة القديمة', mapLink: null, contactLink: null, imageSource: null, placeType: 'Tourism Area', score: 4.5 },
-    { id: 3, name: 'القاهرة الجديدة', description: 'القاهرة الجديدة', classType: 'A', zone: 'القاهرة الجديدة', zoneId: 1, governorate: 'القاهرة', governorateId: 1, rating: 4.5, averagePricePerAdult: 1000, tourismType: 'منطقة تاريخية', hasKidsArea: true, address: 'القاهرة الجديدة', mapLink: null, contactLink: null, imageSource: null, placeType: 'Tourism Area', score: 4.5 },
+    { id: 1, name: 'القاهرة الجديدة', description: 'القاهرة الجديدة', classType: 'A', zone: 'القاهرة الجديدة', zoneId: 1, governorate: 'القاهرة', governorateId: 1, rating: 4.5, averagePricePerAdult: 1000, tourismType: 'منطقة تاريخية', hasKidsArea: true, address: 'القاهرة الجديدة', mapLink: null, contactLink: null, imageUrl: null, placeType: 'Tourism Area', score: 4.5 },
+    { id: 2, name: 'القاهرة القديمة', description: 'القاهرة القديمة', classType: 'A', zone: 'القاهرة القديمة', zoneId: 1, governorate: 'القاهرة', governorateId: 1, rating: 4.5, averagePricePerAdult: 1000, tourismType: 'منطقة تاريخية', hasKidsArea: true, address: 'القاهرة القديمة', mapLink: null, contactLink: null, imageUrl: null, placeType: 'Tourism Area', score: 4.5 },
+    { id: 3, name: 'القاهرة الجديدة', description: 'القاهرة الجديدة', classType: 'A', zone: 'القاهرة الجديدة', zoneId: 1, governorate: 'القاهرة', governorateId: 1, rating: 4.5, averagePricePerAdult: 1000, tourismType: 'منطقة تاريخية', hasKidsArea: true, address: 'القاهرة الجديدة', mapLink: null, contactLink: null, imageUrl: null, placeType: 'Tourism Area', score: 4.5 },
 ]
 const TourismAreaPage = () => {
     let [zones, setZones] = useState<any[]>(zonesD);
@@ -137,7 +137,7 @@ const TourismAreaPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const getZones = async () => {
         const result = await fetchZones();
-        setZones(result.data);
+        setZones(result);
     };
     const router = useRouter();
     const [tourismAreas, setTourismAreas] = useState<TourismArea[]>(tourismArea);
@@ -156,11 +156,11 @@ const TourismAreaPage = () => {
     useEffect(() => {
         fetchTourismAreas();
         getZones();
-        getGovernorates();
+        // getGovernorates();
     }, [filters]);
     let getGovernorates = async () => {
         const result = await fetchGovernorates();
-        setGovernorates(result.data);
+        setGovernorates(result);
     };
     const filteredTourismAreas = tourismAreas.filter(tourismArea => {
         const matchesSearch = tourismArea.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -388,7 +388,7 @@ const TourismAreaPage = () => {
                                             <CardMedia
                                                 component="img"
                                                 height="200"
-                                                image={area.imageSource || '/images/default.png'}
+                                                image={area.imageUrl || '/images/default.png'}
                                                 alt={area.name}
                                             />
                                             <CardContent sx={{ flexGrow: 1 }}>

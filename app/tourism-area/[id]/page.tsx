@@ -17,6 +17,10 @@ import {
     Card,
     CardContent,
     CardMedia,
+    FormControl,
+    Select,
+    MenuItem,
+    InputLabel,
 } from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import PhoneIcon from '@mui/icons-material/Phone';
@@ -25,6 +29,8 @@ import ChildCareIcon from '@mui/icons-material/ChildCare';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { fetchTourismArea } from '@/services/api';
+import { fetchEntertainment } from '@/services/api';
 
 export interface TourismArea {
     id: number;
@@ -42,11 +48,17 @@ export interface TourismArea {
     address: string;
     mapLink: string | null;
     contactLink: string | null;
-    imageSource: string | null;
+    imageUrl: string | null;
     placeType: "Tourism Area";
     score: number;
 }
 
+interface Entertainment {
+    id: number;
+    name: string;
+    averagePricePerAdult: number;
+    imageUrl: string | null;
+}
 interface RelatedTourismAreas {
     sameZone: TourismArea[];
     sameClass: TourismArea[];
@@ -69,6 +81,10 @@ const TourismAreaPage = ({ params }: { params: Promise<{ id: string }> }) => {
         sameClass: [],
         sameType: []
     });
+    const [entertainment, setEntertainment] = useState<Entertainment[]>([]);
+    const [tourismAreas, setTourismAreas] = useState<TourismArea[]>([]);
+    const [selectedEntertainment, setSelectedEntertainment] = useState<number[]>([]);
+    const [selectedTourismAreas, setSelectedTourismAreas] = useState<number[]>([]);
     const [mapPosition, setMapPosition] = useState<[number, number] | null>(null);
 
     const getCoordinatesFromAddress = async (address: string): Promise<[number, number] | null> => {
@@ -95,12 +111,15 @@ const TourismAreaPage = ({ params }: { params: Promise<{ id: string }> }) => {
                 setTourismArea(tourismAreaData);
 
                 // جلب المناطق السياحية المرتبطة
-                const [zoneResponse, classResponse, typeResponse] = await Promise.all([
+                const [entertainmentResponse, tourismAreasResponse, zoneResponse, classResponse, typeResponse] = await Promise.all([
+                    fetchEntertainment(tourismAreaData.zoneId),
+                    fetchTourismArea(tourismAreaData.zoneId),
                     axios.get(`/api/tourism-area/zone/${tourismAreaData.zoneId}`),
                     axios.get(`/api/tourism-area/class/${classABCD[tourismAreaData.classType as keyof typeof classABCD]}`),
                     axios.get(`/api/tourism-area/type/${tourismAreaData.tourismType}`)
                 ]);
-
+                setEntertainment(entertainmentResponse.data || []);
+                setTourismAreas(tourismAreasResponse.data || []);
                 setRelatedTourismAreas({
                     sameZone: zoneResponse.data.data.filter((e: TourismArea) => e.id !== tourismAreaData.id),
                     sameClass: classResponse.data.data.filter((e: TourismArea) => e.id !== tourismAreaData.id),
@@ -139,7 +158,7 @@ const TourismAreaPage = ({ params }: { params: Promise<{ id: string }> }) => {
                             <CardMedia
                                 component="img"
                                 height="140"
-                                image={area.imageSource || '/images/default.png'}
+                                image={area.imageUrl || '/images/default.png'}
                                 alt={area.name}
                             />
                             <CardContent>
@@ -196,7 +215,7 @@ const TourismAreaPage = ({ params }: { params: Promise<{ id: string }> }) => {
                     <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
                         <Box sx={{ position: 'relative', mb: 3 }}>
                             <img
-                                src={tourismArea.imageSource || '/images/default.png'}
+                                src={tourismArea.imageUrl || '/images/default.png'}
                                 alt={tourismArea.name}
                                 style={{
                                     width: '100%',
@@ -246,6 +265,80 @@ const TourismAreaPage = ({ params }: { params: Promise<{ id: string }> }) => {
                         <Typography variant="body1" paragraph>
                             {tourismArea.description}
                         </Typography>
+                        <Divider sx={{ my: 3 }} />
+
+                        {/* خيارات الترفيه */}
+                        <Typography variant="h6" gutterBottom>
+                            أماكن الترفيه
+                        </Typography>
+                        <FormControl fullWidth sx={{ mb: 3 }}>
+                            <InputLabel>اختر أماكن الترفيه</InputLabel>
+                            <Select
+                                multiple
+                                value={selectedEntertainment}
+                                onChange={(e) => setSelectedEntertainment(e.target.value as number[])}
+                                renderValue={(selected) => (
+                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                        {selected.map((value) => (
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                <img src={entertainment.find(e => e.id === value)?.imageUrl || '/images/default.png'} alt={entertainment.find(e => e.id === value)?.name} className="w-[50px] h-[50px] rounded-md" />
+                                                <Chip
+                                                    key={value}
+                                                    label={entertainment.find(e => e.id === value)?.name + ' - ' + entertainment.find(e => e.id === value)?.averagePricePerAdult + ' جنيه'}
+                                                />
+                                            </Box>
+                                        ))}
+                                    </Box>
+                                )}
+                            >
+                                {entertainment.map((item) => (
+                                    <MenuItem key={item.id} value={item.id}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                            <img src={item.imageUrl || '/images/default.png'} alt={item.name} className="w-[50px] h-[50px] rounded-md" />
+                                            <Typography variant="body1">
+                                                {item.name} - {item.averagePricePerAdult} جنيه
+                                            </Typography>
+                                        </Box>
+                                        {item.name} - {item.averagePricePerAdult} جنيه
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+
+                        {/* المناطق السياحية */}
+                        <Typography variant="h6" gutterBottom>
+                            المناطق السياحية
+                        </Typography>
+                        <FormControl fullWidth sx={{ mb: 3 }}>
+                            <InputLabel>اختر المناطق السياحية</InputLabel>
+                            <Select
+                                multiple
+                                value={selectedTourismAreas}
+                                onChange={(e) => setSelectedTourismAreas(e.target.value as number[])}
+                                renderValue={(selected) => (
+                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                        {selected.map((value) => (
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                <img src={tourismAreas.find(e => e.id === value)?.imageUrl || '/images/default.png'} alt={tourismAreas.find(e => e.id === value)?.name} className="w-[50px] h-[50px] rounded-md" />
+                                                <Chip
+                                                    key={value}
+                                                    label={tourismAreas.find(e => e.id === value)?.name + ' - ' + tourismAreas.find(e => e.id === value)?.averagePricePerAdult + ' جنيه'}
+                                                />
+                                            </Box>
+                                        ))}
+                                    </Box>
+                                )}
+                            >
+                                {tourismAreas.map((item) => (
+                                    <MenuItem key={item.id} value={item.id}>
+                                        <img src={item.imageUrl || '/images/default.png'} alt={item.name} className="w-[50px] h-[50px] rounded-md" />
+                                        {item.name} - {item.averagePricePerAdult} جنيه
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+
+
 
                         <Divider sx={{ my: 3 }} />
 

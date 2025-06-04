@@ -8,7 +8,7 @@ interface Accommodation {
     averagePricePerAdult: number;
     description: string;
     address: string;
-    imageSource: string | null;
+    imageUrl: string | null;
 }
 const AccommodationList = () => {
     const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
@@ -20,7 +20,7 @@ const AccommodationList = () => {
             accomodationType: "Hotel",
             description: "This luxurious suite offers a lot of space with separate living room and satellite TV.",
             averagePricePerAdult: 15751,
-            imageSource: '/images/default.png',
+            imageUrl: '/images/default.png',
             address: "123 Static St.",
         },
         {
@@ -29,7 +29,7 @@ const AccommodationList = () => {
             accomodationType: "Hotel",
             description: "Experience the best view of the Nile with luxurious amenities.",
             averagePricePerAdult: 12000,
-            imageSource: '/images/default.png',
+            imageUrl: '/images/default.png',
             address: "123 Static St.",
         },
     ];
@@ -56,7 +56,7 @@ const AccommodationList = () => {
                     {accommodations.slice(0, 12).map((accommodation: Accommodation) => (
                         <div key={accommodation.id} style={styles.card}>
                             <div style={styles.imageContainer}>
-                                <img src={accommodation.imageSource || '/images/default.png'} alt={accommodation.name} style={styles.image} />
+                                <img src={accommodation.imageUrl || '/images/default.png'} alt={accommodation.name} style={styles.image} />
                                 <div style={styles.discountBadge}>20% OFF</div>
                             </div>
                             <div style={styles.info}>

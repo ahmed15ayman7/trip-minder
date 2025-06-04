@@ -14,7 +14,8 @@ export default withAuth(
 
 export const config = {
     matcher: [
-        "/accommodation/:path*",
-        "/restaurants/:path*",
+        // "/accommodation/:path*",
+        // "/restaurants/:path*",
+        // "/tourism-area/:path*",
     ],
 }; 

@@ -1,7 +1,7 @@
 // services/api.ts
 import axios from 'axios';
 
-export const baseUrl = 'https://580a-197-132-64-8.ngrok-free.app/';
+export const baseUrl = 'https://d823-102-191-183-130.ngrok-free.app/';
 export const FoodCategories = {
     "Seafood": 1,
     "Grilled Food & Steaks": 2,
@@ -43,6 +43,7 @@ export const fetchRestaurants = async () => {
     try {
         const response = await axios.get("/api/restaurants");
         console.log(response.data);
+
         return response.data;
     } catch (error) {
         console.error("Error fetching data:", error);
@@ -72,7 +73,7 @@ export const fetchTourismArea = async (zoneId: number) => {
 export const fetchZones = async () => {
     try {
         const response = await axios.get("/api/zone");
-        console.log(response.data);
+        // console.log(response.data);
         return response.data.data;
     } catch (error) {
         console.error("Error fetching data:", error);
@@ -81,7 +82,7 @@ export const fetchZones = async () => {
 };
 export const fetchGovernorates = async () => {
     try {
-        const response = await axios.get("/api/governorate");
+        const response = await axios.get(`${baseUrl}Api/v1/city/list`)
         console.log(response.data);
         return response.data.data;
     } catch (error) {

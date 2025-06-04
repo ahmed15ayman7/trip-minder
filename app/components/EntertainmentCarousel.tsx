@@ -15,7 +15,7 @@ interface Entertainment {
     address: string;
     entertainmentType: string;
     hasKidsArea: boolean;
-    imageSource: string | null;
+    imageUrl: string | null;
     averagePricePerAdult: number;
 }
 
@@ -30,7 +30,7 @@ const staticData: Entertainment[] = [
         address: 'شارع المرح، القاهرة',
         entertainmentType: 'ملاهي',
         hasKidsArea: true,
-        imageSource: defaultImage,
+        imageUrl: defaultImage,
         averagePricePerAdult: 150,
     },
     {
@@ -42,7 +42,7 @@ const staticData: Entertainment[] = [
         address: 'مول سيتي ستارز، القاهرة',
         entertainmentType: 'ألعاب إلكترونية',
         hasKidsArea: false,
-        imageSource: defaultImage,
+        imageUrl: defaultImage,
         averagePricePerAdult: 100,
     },
     {
@@ -54,7 +54,7 @@ const staticData: Entertainment[] = [
         address: 'الجيزة',
         entertainmentType: 'حديقة',
         hasKidsArea: true,
-        imageSource: defaultImage,
+        imageUrl: defaultImage,
         averagePricePerAdult: 50,
     },
     {
@@ -66,7 +66,7 @@ const staticData: Entertainment[] = [
         address: 'شارع المرح، القاهرة',
         entertainmentType: 'ملاهي',
         hasKidsArea: true,
-        imageSource: defaultImage,
+        imageUrl: defaultImage,
         averagePricePerAdult: 150,
     },
     {
@@ -78,7 +78,7 @@ const staticData: Entertainment[] = [
         address: 'مول سيتي ستارز، القاهرة',
         entertainmentType: 'ألعاب إلكترونية',
         hasKidsArea: false,
-        imageSource: defaultImage,
+        imageUrl: defaultImage,
         averagePricePerAdult: 100,
     },
     // ... أضف حتى 20 عنصر افتراضي
@@ -136,7 +136,7 @@ const EntertainmentCarousel = () => {
                             <CardMedia
                                 component="img"
                                 height="200"
-                                image={entertainment.imageSource || defaultImage}
+                                image={entertainment.imageUrl || defaultImage}
                                 alt={entertainment.name}
                                 sx={{ objectFit: 'cover' }}
                             />

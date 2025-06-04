@@ -90,7 +90,7 @@ export interface Entertainment {
     address: string;
     mapLink: string | null;
     contactLink: string | null;
-    imageSource: string | null;
+    imageUrl: string | null;
     placeType: "Entertainment";
     score: number;
 }
@@ -125,9 +125,9 @@ interface Filters {
 
 }
 let entertainment: Entertainment[] = [
-    { id: 1, name: 'القاهرة الجديدة', description: 'القاهرة الجديدة', classType: 'A', zone: 'القاهرة الجديدة', zoneId: 1, governorate: 'القاهرة', governorateId: 1, rating: 4.5, averagePricePerAdult: 1000, entertainmentType: 'مقهى', hasKidsArea: true, address: 'القاهرة الجديدة', mapLink: null, contactLink: null, imageSource: null, placeType: 'Entertainment', score: 4.5 },
-    { id: 2, name: 'القاهرة القديمة', description: 'القاهرة القديمة', classType: 'A', zone: 'القاهرة القديمة', zoneId: 1, governorate: 'القاهرة', governorateId: 1, rating: 4.5, averagePricePerAdult: 1000, entertainmentType: 'مقهى', hasKidsArea: true, address: 'القاهرة القديمة', mapLink: null, contactLink: null, imageSource: null, placeType: 'Entertainment', score: 4.5 },
-    { id: 3, name: 'القاهرة الجديدة', description: 'القاهرة الجديدة', classType: 'A', zone: 'القاهرة الجديدة', zoneId: 1, governorate: 'القاهرة', governorateId: 1, rating: 4.5, averagePricePerAdult: 1000, entertainmentType: 'مقهى', hasKidsArea: true, address: 'القاهرة الجديدة', mapLink: null, contactLink: null, imageSource: null, placeType: 'Entertainment', score: 4.5 },
+    { id: 1, name: 'القاهرة الجديدة', description: 'القاهرة الجديدة', classType: 'A', zone: 'القاهرة الجديدة', zoneId: 1, governorate: 'القاهرة', governorateId: 1, rating: 4.5, averagePricePerAdult: 1000, entertainmentType: 'مقهى', hasKidsArea: true, address: 'القاهرة الجديدة', mapLink: null, contactLink: null, imageUrl: null, placeType: 'Entertainment', score: 4.5 },
+    { id: 2, name: 'القاهرة القديمة', description: 'القاهرة القديمة', classType: 'A', zone: 'القاهرة القديمة', zoneId: 1, governorate: 'القاهرة', governorateId: 1, rating: 4.5, averagePricePerAdult: 1000, entertainmentType: 'مقهى', hasKidsArea: true, address: 'القاهرة القديمة', mapLink: null, contactLink: null, imageUrl: null, placeType: 'Entertainment', score: 4.5 },
+    { id: 3, name: 'القاهرة الجديدة', description: 'القاهرة الجديدة', classType: 'A', zone: 'القاهرة الجديدة', zoneId: 1, governorate: 'القاهرة', governorateId: 1, rating: 4.5, averagePricePerAdult: 1000, entertainmentType: 'مقهى', hasKidsArea: true, address: 'القاهرة الجديدة', mapLink: null, contactLink: null, imageUrl: null, placeType: 'Entertainment', score: 4.5 },
 
 ]
 
@@ -152,7 +152,7 @@ const EntertainmentPage = () => {
     useEffect(() => {
         fetchEntertainments();
         getZones();
-        getGovernorates();
+        // getGovernorates();
     }, [filters]);
     const filteredEntertainments = entertainments.filter(entertainment => {
         const matchesSearch = entertainment.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -182,11 +182,11 @@ const EntertainmentPage = () => {
     };
     const getZones = async () => {
         const result = await fetchZones();
-        setZones(result.data);
+        setZones(result);
     };
     const getGovernorates = async () => {
         const result = await fetchGovernorates();
-        setGovernorates(result.data);
+        setGovernorates(result);
     };
     const handleFilterChange = (name: string, value: any) => {
         setFilters(prev => ({
@@ -387,7 +387,7 @@ const EntertainmentPage = () => {
                                             <CardMedia
                                                 component="img"
                                                 height="200"
-                                                image={entertainment.imageSource || '/images/default.png'}
+                                                image={entertainment.imageUrl || '/images/default.png'}
                                                 alt={entertainment.name}
                                             />
                                             <CardContent sx={{ flexGrow: 1 }}>
