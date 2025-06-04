@@ -209,7 +209,7 @@ const GovernorateDetailsPage = ({ params }: { params: Promise<{ id: string }> })
             </Box>
             <Divider sx={{ mb: 3 }} />
             <SectionCarousel title="أماكن الإقامة" items={accommodations} onSeeAll={() => router.push('/accommodation')} type="accommodation" />
-            <SectionCarousel title="المطاعم" items={restaurants} onSeeAll={() => router.push('/restaurant')} type="restaurants" />
+            <SectionCarousel title="المطاعم" items={restaurants} onSeeAll={() => router.push('/restaurants')} type="restaurants" />
             <SectionCarousel title="أماكن الترفيه" items={entertainments} onSeeAll={() => router.push('/entertainment')} type="entertainment" />
             <SectionCarousel title="المناطق السياحية" items={tourismAreas} onSeeAll={() => router.push('/tourism-area')} type="tourism-area" />
         </Container>

@@ -98,12 +98,11 @@ const RestaurantPage = ({ params }: { params: Promise<{ id: string }> }) => {
                 {restaurants.map((restaurant) => (
                     <Grid size={{ xs: 12, sm: 6, md: 4 }} component="div" key={restaurant.id}>
                         <Card>
-                            <CardMedia
-                                component="img"
-                                height="140"
-                                image={restaurant.imageUrl || defaultImage}
-                                alt={restaurant.name}
-                            />
+                            <div style={{
+                                width: '100%',
+                                height: '150px',
+                                objectFit: 'cover' as 'cover', backgroundImage: `url(${restaurant.imageUrl || defaultImage})`, backgroundPosition: 'center', backgroundSize: 'cover', backgroundRepeat: 'no-repeat'
+                            }} />
                             <CardContent>
                                 <Typography variant="h6" noWrap>
                                     {restaurant.name}

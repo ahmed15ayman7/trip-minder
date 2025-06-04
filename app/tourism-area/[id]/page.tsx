@@ -31,6 +31,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { fetchTourismArea } from '@/services/api';
 import { fetchEntertainment } from '@/services/api';
+import defaultImage from '@/assets/default.png';
 
 export interface TourismArea {
     id: number;
@@ -155,12 +156,11 @@ const TourismAreaPage = ({ params }: { params: Promise<{ id: string }> }) => {
                 {areas.map((area) => (
                     <Grid size={{ xs: 12, sm: 6, md: 4 }} key={area.id}>
                         <Card>
-                            <CardMedia
-                                component="img"
-                                height="140"
-                                image={area.imageUrl || '/images/default.png'}
-                                alt={area.name}
-                            />
+                            <div style={{
+                                width: '100%',
+                                height: '150px',
+                                objectFit: 'cover' as 'cover', backgroundImage: `url(${area.imageUrl || defaultImage})`, backgroundPosition: 'center', backgroundSize: 'cover', backgroundRepeat: 'no-repeat'
+                            }} />
                             <CardContent>
                                 <Typography variant="h6" noWrap>
                                     {area.name}
