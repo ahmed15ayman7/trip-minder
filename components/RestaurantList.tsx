@@ -95,11 +95,11 @@ const RestaurantList: React.FC = () => {
             try {
                 const result = await fetchRestaurants();
                 if (result.data && result.data.length > 0) {
+                    console.log(result.data);
                     setRestaurants(result.data);
                 } else {
                     setRestaurants(staticData);
                 }
-                setRestaurants(staticData);
             } catch (error) {
                 setRestaurants(staticData);
             }
@@ -118,7 +118,7 @@ const RestaurantList: React.FC = () => {
                 onSeeAll={() => router.push('/restaurants')}
             />
             <div style={styles.grid}>
-                {restaurants.slice(0, 5).map((restaurant) => (
+                {restaurants.slice(0, 6).map((restaurant) => (
                     <div key={restaurant.id} style={styles.card} onClick={() => handleCardClick(restaurant.id)}>
                         <div style={styles.imageContainer}>
                             <div style={{ ...styles.image, backgroundImage: `url(${restaurant.imageUrl || defaultImage})`, backgroundPosition: 'center', backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }} />

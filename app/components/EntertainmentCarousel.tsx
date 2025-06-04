@@ -133,13 +133,11 @@ const EntertainmentCarousel = () => {
                 {entertainments.map((entertainment) => (
                     <Box key={entertainment.id} sx={{ px: 1 }}>
                         <Card sx={{ height: '100%', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', cursor: 'pointer', border: '1px solid #eee' }} onClick={() => router.push(`/entertainment/${entertainment.id}`)}>
-                            <CardMedia
-                                component="img"
-                                height="200"
-                                image={entertainment.imageUrl || defaultImage}
-                                alt={entertainment.name}
-                                sx={{ objectFit: 'cover' }}
-                            />
+                            <div style={{
+                                width: '100%',
+                                height: '200px',
+                                objectFit: 'cover' as 'cover', backgroundImage: `url(${entertainment.imageUrl || defaultImage})`, backgroundPosition: 'center', backgroundSize: 'cover', backgroundRepeat: 'no-repeat'
+                            }} />
                             <CardContent>
                                 <Typography variant="h6" gutterBottom noWrap sx={{ color: '#ff6600', fontWeight: 'bold' }}>
                                     {entertainment.name}

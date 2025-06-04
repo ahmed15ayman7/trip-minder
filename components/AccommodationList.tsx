@@ -159,7 +159,7 @@ const AccommodationList: React.FC = () => {
                 onSeeAll={() => router.push('/accommodation')}
             />
             <div style={styles.grid}>
-                {accommodations.slice(0, 5).map((accommodation) => (
+                {accommodations.slice(0, 4).map((accommodation) => (
                     <div key={accommodation.id} style={styles.card} onClick={() => handleCardClick(accommodation.id)}>
                         <div style={{ ...styles.image, backgroundImage: `url(${accommodation.imageUrl || defaultImage})`, backgroundPosition: 'center', backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }} />
                         <div style={styles.info}>

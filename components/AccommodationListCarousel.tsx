@@ -63,7 +63,6 @@ const AccommodationListCarousel: React.FC = () => {
                 } else {
                     setAccommodations(staticData);
                 }
-                setAccommodations(staticData);
             } catch (error) {
                 setAccommodations(staticData);
             }
@@ -138,7 +137,7 @@ const AccommodationListCarousel: React.FC = () => {
                                     {accommodation.address}
                                 </Typography>
                                 <Typography variant="body2" sx={{ color: '#555', mt: 1 }}>
-                                    {accommodation.description}
+                                    {accommodation.description.slice(0, 200)}...
                                 </Typography>
                                 <Typography variant="h6" sx={{ color: '#ff6600', fontWeight: 'bold', mt: 1, textAlign: 'right' }}>
                                     من {accommodation.averagePricePerAdult} جنيه
