@@ -107,19 +107,19 @@ const EntertainmentPage = ({ params }: { params: Promise<{ id: string }> }) => {
                 setEntertainment(entertainmentData);
 
                 // جلب أماكن الترفيه المرتبطة
-                const [zoneResponse, classResponse, typeResponse] = await Promise.all([
-                    fetchEntertainment(entertainmentData.zoneId),
+                const [tourismAreasResponse, zoneResponse, classResponse, typeResponse] = await Promise.all([
+                    // fetchEntertainment(entertainmentData.zoneId),
                     fetchTourismArea(entertainmentData.zoneId),
                     axios.get(`/api/entertainment/zone/${entertainmentData.zoneId}`),
                     axios.get(`/api/entertainment/class/${classABCD[entertainmentData.classType as keyof typeof classABCD]}`),
                     axios.get(`/api/entertainment/type/${entertainmentData.entertainmentType}`)
                 ]);
-
                 setRelatedEntertainments({
                     sameZone: zoneResponse.data.data.filter((e: Entertainment) => e.id !== entertainmentData.id),
                     sameClass: classResponse.data.data.filter((e: Entertainment) => e.id !== entertainmentData.id),
                     sameType: typeResponse.data.data.filter((e: Entertainment) => e.id !== entertainmentData.id)
                 });
+                setTourismAreas(tourismAreasResponse.data);
 
                 // تحويل العنوان إلى إحداثيات
                 if (entertainmentData.mapLink) {
@@ -202,6 +202,15 @@ const EntertainmentPage = ({ params }: { params: Promise<{ id: string }> }) => {
         );
     }
 
+    const calculateTotalPrice = () => {
+        return selectedEntertainment.reduce((total, id) => {
+            const item = relatedEntertainments.sameZone.find(e => e.id === id);
+            return total + (item?.averagePricePerAdult || 0);
+        }, 0) + selectedTourismAreas.reduce((total, id) => {
+            const item = tourismAreas.find(t => t.id === id);
+            return total + (item?.averagePricePerAdult || 0);
+        }, 0) + entertainment.averagePricePerAdult;
+    }
     return (
         <Container maxWidth="lg" sx={{ py: 4 }}>
             <Grid container spacing={4}>
@@ -274,8 +283,8 @@ const EntertainmentPage = ({ params }: { params: Promise<{ id: string }> }) => {
                                 onChange={(e) => setSelectedEntertainment(e.target.value as number[])}
                                 renderValue={(selected) => (
                                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                        {selected.map((value) => (
-                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                        {selected.map((value, index) => (
+                                            <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                                 <img src={relatedEntertainments.sameZone.find(e => e.id === value)?.imageUrl || '/images/default.png'} alt={relatedEntertainments.sameZone.find(e => e.id === value)?.name} className="w-[50px] h-[50px] rounded-md" />
                                                 <Chip
                                                     key={value}
@@ -419,6 +428,33 @@ const EntertainmentPage = ({ params }: { params: Promise<{ id: string }> }) => {
                                 متوسط السعر للفرد: {entertainment.averagePricePerAdult} جنيه
                             </Typography>
                         </Box>
+                        {selectedEntertainment.length > 0 && (
+                            <Box sx={{ mb: 2 }}>
+                                <Typography variant="body1">
+                                    تكلفة الترفيه: {selectedEntertainment.reduce((total, id) => {
+                                        const item = relatedEntertainments.sameZone.find(e => e.id === id);
+                                        return total + (item?.averagePricePerAdult || 0);
+                                    }, 0)} جنيه
+                                </Typography>
+                            </Box>
+                        )}
+
+                        {selectedTourismAreas.length > 0 && (
+                            <Box sx={{ mb: 2 }}>
+                                <Typography variant="body1">
+                                    تكلفة المناطق السياحية: {selectedTourismAreas.reduce((total, id) => {
+                                        const item = tourismAreas.find(t => t.id === id);
+                                        return total + (item?.averagePricePerAdult || 0);
+                                    }, 0)} جنيه
+                                </Typography>
+                            </Box>
+                        )}
+
+                        <Divider sx={{ my: 3 }} />
+
+                        <Typography variant="h6" gutterBottom>
+                            التكلفة الإجمالية: {calculateTotalPrice()} جنيه
+                        </Typography>
 
                         <Button
                             variant="contained"

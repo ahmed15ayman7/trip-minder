@@ -207,6 +207,15 @@ const TourismAreaPage = ({ params }: { params: Promise<{ id: string }> }) => {
         );
     }
 
+    const calculateTotalPrice = () => {
+        return selectedEntertainment.reduce((total, id) => {
+            const item = entertainment.find(e => e.id === id);
+            return total + (item?.averagePricePerAdult || 0);
+        }, 0) + selectedTourismAreas.reduce((total, id) => {
+            const item = tourismAreas.find(t => t.id === id);
+            return total + (item?.averagePricePerAdult || 0);
+        }, 0) + tourismArea.averagePricePerAdult;
+    }
     return (
         <Container maxWidth="lg" sx={{ py: 4 }}>
             <Grid container spacing={4}>
@@ -424,6 +433,32 @@ const TourismAreaPage = ({ params }: { params: Promise<{ id: string }> }) => {
                                 متوسط السعر للفرد: {tourismArea.averagePricePerAdult} جنيه
                             </Typography>
                         </Box>
+                        {selectedEntertainment.length > 0 && (
+                            <Box sx={{ mb: 2 }}>
+                                <Typography variant="body1">
+                                    تكلفة الترفيه: {selectedEntertainment.reduce((total, id) => {
+                                        const item = entertainment.find(e => e.id === id);
+                                        return total + (item?.averagePricePerAdult || 0);
+                                    }, 0)} جنيه
+                                </Typography>
+                            </Box>
+                        )}
+
+                        {selectedTourismAreas.length > 0 && (
+                            <Box sx={{ mb: 2 }}>
+                                <Typography variant="body1">
+                                    تكلفة المناطق السياحية: {selectedTourismAreas.reduce((total, id) => {
+                                        const item = tourismAreas.find(t => t.id === id);
+                                        return total + (item?.averagePricePerAdult || 0);
+                                    }, 0)} جنيه
+                                </Typography>
+                            </Box>
+                        )}
+                        <Divider sx={{ my: 3 }} />
+
+                        <Typography variant="h6" gutterBottom>
+                            التكلفة الإجمالية: {calculateTotalPrice()} جنيه
+                        </Typography>
 
                         <Button
                             variant="contained"

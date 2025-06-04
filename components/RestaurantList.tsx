@@ -95,7 +95,6 @@ const RestaurantList: React.FC = () => {
             try {
                 const result = await fetchRestaurants();
                 if (result.data && result.data.length > 0) {
-                    console.log(result.data);
                     setRestaurants(result.data);
                 } else {
                     setRestaurants(staticData);
