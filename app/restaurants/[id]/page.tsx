@@ -24,6 +24,8 @@ import PhoneIcon from '@mui/icons-material/Phone';
 import MapIcon from '@mui/icons-material/Map';
 import ChildCareIcon from '@mui/icons-material/ChildCare';
 import { FoodCategories, classABCD, AccomodationTypes } from '@/services/api';
+import { useRestaurantStore } from '@/app/store/restaurantStore';
+
 export interface Restaurant {
     id: number;
     name: string;
@@ -47,6 +49,7 @@ export interface Restaurant {
 
 const RestaurantPage = ({ params }: { params: Promise<{ id: string }> }) => {
     const { id } = use(params);
+    const { restaurants, addRestaurant, removeRestaurant, getTotalPrice } = useRestaurantStore();
     const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
     const [loading, setLoading] = useState(true);
     const [relatedRestaurants, setRelatedRestaurants] = useState<{
@@ -132,6 +135,12 @@ const RestaurantPage = ({ params }: { params: Promise<{ id: string }> }) => {
             </Grid>
         </Box>
     );
+
+    const handleBookTable = () => {
+        if (restaurant) {
+            addRestaurant(restaurant);
+        }
+    };
 
     if (loading) {
         return (
@@ -264,27 +273,66 @@ const RestaurantPage = ({ params }: { params: Promise<{ id: string }> }) => {
                         <Typography variant="h6" gutterBottom>
                             ملخص التكلفة
                         </Typography>
-                        <Divider sx={{ my: 2 }} />
+                        {restaurants.filter(r => r.id === restaurant.id).length === 0 && (
+                            <Box sx={{ mb: 2 }}>
+                                <Divider sx={{ my: 2 }} />
+                                <Typography variant="body1">
+                                    متوسط السعر للفرد: {restaurant.averagePricePerAdult} جنيه
+                                </Typography>
+                            </Box>
+                        )}
 
-                        <Box sx={{ mb: 2 }}>
-                            <Typography variant="body1">
-                                متوسط السعر للفرد: {restaurant.averagePricePerAdult} جنيه
-                            </Typography>
-                        </Box>
+                        {restaurants.length > 0 && (
+                            <>
+                                <Divider sx={{ my: 2 }} />
+                                <Typography variant="h6" gutterBottom>
+                                    المطاعم المختارة
+                                </Typography>
+                                {restaurants.map((r) => (
+                                    <Box key={r.id} sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <Typography variant="body1">
+                                            {r.name}
+                                        </Typography>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                            <Typography variant="body1">
+                                                {r.averagePricePerAdult} جنيه
+                                            </Typography>
+                                            <Button
+                                                variant="outlined"
+                                                color="error"
+                                                size="small"
+                                                onClick={() => removeRestaurant(r.id)}
+                                            >
+                                                إزالة
+                                            </Button>
+                                        </Box>
+                                    </Box>
+                                ))}
+                                <Divider sx={{ my: 2 }} />
+                                <Typography variant="h6" gutterBottom>
+                                    إجمالي المطاعم المختارة: {getTotalPrice()} جنيه
+                                </Typography>
+                                <Divider sx={{ my: 2 }} />
+                                <Typography variant="h6" gutterBottom>
+                                    الإجمالي الكلي: {getTotalPrice() + (restaurants.filter(r => r.id === restaurant.id).length === 0 ? restaurant.averagePricePerAdult : 0)} جنيه
+                                </Typography>
+                            </>
+                        )}
 
                         <Button
                             variant="contained"
                             fullWidth
                             size="large"
+                            onClick={handleBookTable}
                             sx={{
                                 mt: 2,
-                                bgcolor: '#ff6600',
+                                bgcolor: restaurants.filter(r => r.id === restaurant.id).length === 0 ? '#ff6600' : '#008000',
                                 '&:hover': {
                                     bgcolor: '#e65c00',
                                 },
                             }}
                         >
-                            احجز طاولة
+                            {restaurants.filter(r => r.id === restaurant.id).length === 0 ? "احجز طاولة" : "تم الاختيار"}
                         </Button>
                     </Paper>
                 </Grid>

@@ -31,6 +31,7 @@ import 'leaflet/dist/leaflet.css';
 import { fetchTourismArea } from '@/services/api';
 import { fetchEntertainment } from '@/services/api';
 import dynamic from 'next/dynamic';
+import { useRestaurantStore } from '@/app/store/restaurantStore';
 let defaultImage = '/images/default.png';
 
 export interface TourismArea {
@@ -103,6 +104,7 @@ const TourismAreaPage = ({ params }: { params: Promise<{ id: string }> }) => {
     const [mapPosition, setMapPosition] = useState<[number, number] | null>(null);
     const [restaurants, setRestaurants] = useState<Restaurants[]>([]);
     const [selectedRestaurants, setSelectedRestaurants] = useState<number[]>([]);
+    const { restaurants: selectedRestaurantsStore, addRestaurant, removeRestaurant, getTotalPrice } = useRestaurantStore();
     const getCoordinatesFromAddress = async (address: string): Promise<[number, number] | null> => {
         try {
             const response = await axios.get(
@@ -494,7 +496,7 @@ const TourismAreaPage = ({ params }: { params: Promise<{ id: string }> }) => {
                                 </Typography>
                             </Box>
                         )}
-                        <Divider sx={{ my: 3 }} />
+
                         {selectedRestaurants.length > 0 && (
                             <Box sx={{ mb: 2 }}>
                                 <Typography variant="body1">
@@ -506,8 +508,43 @@ const TourismAreaPage = ({ params }: { params: Promise<{ id: string }> }) => {
                             </Box>
                         )}
 
+                        {selectedRestaurantsStore.length > 0 && (
+                            <>
+                                <Divider sx={{ my: 2 }} />
+                                <Typography variant="h6" gutterBottom>
+                                    المطاعم المختارة
+                                </Typography>
+                                {selectedRestaurantsStore.map((r) => (
+                                    <Box key={r.id} sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <Typography variant="body1">
+                                            {r.name}
+                                        </Typography>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                            <Typography variant="body1">
+                                                {r.averagePricePerAdult} جنيه
+                                            </Typography>
+                                            <Button
+                                                variant="outlined"
+                                                color="error"
+                                                size="small"
+                                                onClick={() => removeRestaurant(r.id)}
+                                            >
+                                                إزالة
+                                            </Button>
+                                        </Box>
+                                    </Box>
+                                ))}
+                                <Divider sx={{ my: 2 }} />
+                                <Typography variant="h6" gutterBottom>
+                                    إجمالي المطاعم المختارة: {getTotalPrice()} جنيه
+                                </Typography>
+                            </>
+                        )}
+
+                        <Divider sx={{ my: 3 }} />
+
                         <Typography variant="h6" gutterBottom>
-                            التكلفة الإجمالية: {calculateTotalPrice()} جنيه
+                            التكلفة الإجمالية: {calculateTotalPrice() + getTotalPrice()} جنيه
                         </Typography>
 
                         <Button

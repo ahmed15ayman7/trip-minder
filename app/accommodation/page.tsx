@@ -51,11 +51,11 @@ const zonesD = [
 ];
 
 const accommodationTypes = [
-    { id: 1, name: 'فيلا' },
-    { id: 2, name: 'فندق' },
-    { id: 3, name: 'شاليه' },
-    { id: 4, name: 'شقة' },
-    { id: 5, name: 'نُزل' },
+    { id: 1, name: 'فيلا', type: 'villa' },
+    { id: 2, name: 'فندق', type: 'hotel' },
+    { id: 3, name: 'شاليه', type: 'chalet' },
+    { id: 4, name: 'شقة', type: 'apartment' },
+    { id: 5, name: 'نُزل', type: 'house' },
 ];
 
 const classes = [
@@ -68,9 +68,9 @@ const classes = [
 interface Accommodation {
     id: number;
     name: string;
-    accomodationTypeId: number;
+    accomodationType: string;
     placeTypeId: number;
-    classId: number;
+    classType: string;
     governorateId: number;
     zoneId: number;
     averagePricePerAdult: number;
@@ -96,6 +96,7 @@ interface Zone {
 interface AccommodationType {
     id: number;
     name: string;
+    type: string;
 }
 
 interface Class {
@@ -122,9 +123,9 @@ let accommodation: Accommodation[] = [
         zoneId: 1, governorateId: 1,
         rating: 4.5,
         averagePricePerAdult: 1000,
-        accomodationTypeId: 1,
+        accomodationType: "villa",
         placeTypeId: 1,
-        classId: 1,
+        classType: "A",
         hasKidsArea: false,
         bedStatus: 'متاح',
         address: 'القاهرة الجديدة', mapLink: null, contactLink: null, imageUrl: null, score: 4.5, numOfBeds: 1, numOfPersons: 1, tripSuggestionId: 1,
@@ -135,9 +136,9 @@ let accommodation: Accommodation[] = [
         zoneId: 1, governorateId: 1,
         rating: 4.5,
         averagePricePerAdult: 1000,
-        accomodationTypeId: 1,
+        accomodationType: "villa",
         placeTypeId: 1,
-        classId: 1,
+        classType: "A",
         hasKidsArea: true,
         bedStatus: 'متاح',
         address: 'القاهرة الجديدة',
@@ -155,9 +156,9 @@ let accommodation: Accommodation[] = [
         zoneId: 1, governorateId: 1,
         rating: 4.5,
         averagePricePerAdult: 1000,
-        accomodationTypeId: 1,
+        accomodationType: "villa",
         placeTypeId: 1,
-        classId: 1,
+        classType: "A",
         hasKidsArea: true,
         bedStatus: 'متاح',
         address: 'القاهرة الجديدة',
@@ -197,7 +198,7 @@ export default function AccommodationPage() {
         const getData = async () => {
             try {
                 const result = await fetchAccommodations();
-                console.log(result.data);
+                // console.log(result.data);
                 if (result.data && result.data.length > 0) {
                     setAccommodations(result.data);
                 }
@@ -219,15 +220,26 @@ export default function AccommodationPage() {
             [type]: value
         }));
     };
-
+    let getClassesId = (classType: string) => {
+        switch (classType) {
+            case "A":
+                return 1;
+            case "B":
+                return 2;
+            case "C":
+                return 3;
+            case "D":
+                return 4;
+        }
+    }
     const filteredAccommodations = accommodations.filter(accommodation => {
         const matchesSearch = accommodation.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             accommodation?.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             accommodation.address.toLowerCase().includes(searchTerm.toLowerCase());
 
-        const matchesZone = filters.zones.length === 0 || filters.zones.filter(z => z.id === accommodation.zoneId).length > 0;
-        const matchesType = filters.accommodationTypes.length === 0 || filters.accommodationTypes.filter(t => t.id === accommodation.accomodationTypeId).length > 0;
-        const matchesClass = filters.classes.length === 0 || filters.classes.filter(c => c.id === accommodation.classId).length > 0;
+        const matchesZone = filters.zones.length === 0 || filters.zones.filter(z => z.id === +accommodation.zoneId).length > 0;
+        const matchesType = filters.accommodationTypes.length === 0 || filters.accommodationTypes.filter(t => t.type === accommodation.accomodationType.toLowerCase()).length > 0;
+        const matchesClass = filters.classes.length === 0 || filters.classes.filter(c => c.id === getClassesId(accommodation.classType)).length > 0;
         const matchesKidsArea = !filters.hasKidsArea || accommodation.hasKidsArea;
         const matchesPrice = accommodation.averagePricePerAdult >= filters.minPrice &&
             accommodation.averagePricePerAdult <= filters.maxPrice;
@@ -236,11 +248,11 @@ export default function AccommodationPage() {
         const matchesMembers = accommodation.numOfPersons >= filters.minMembers &&
             accommodation.numOfPersons <= filters.maxMembers;
 
-        return matchesSearch && matchesZone && matchesType && matchesClass
-            && matchesKidsArea
+        return matchesZone && matchesType && matchesClass
+            && matchesSearch && matchesKidsArea
             && matchesPrice && matchesBeds && matchesMembers;
     });
-    // console.log(filters, filteredAccommodations);
+
 
     const FilterDrawer = () => (
         <Drawer
@@ -276,11 +288,11 @@ export default function AccommodationPage() {
                                     key={zone.id}
                                     control={
                                         <Checkbox
-                                            checked={filters.zones.includes(zone.id)}
+                                            checked={filters.zones.filter(z => z.id === zone.id).length > 0}
                                             onChange={(e) => {
                                                 const newZones = e.target.checked
-                                                    ? [...filters.zones, zone.id]
-                                                    : filters.zones.filter(id => id !== zone.id);
+                                                    ? [...filters.zones, zone]
+                                                    : filters.zones.filter(id => id.id !== zone.id);
                                                 handleFilterChange('zones', newZones);
                                             }}
                                         />
@@ -305,11 +317,11 @@ export default function AccommodationPage() {
                                     key={type.id}
                                     control={
                                         <Checkbox
-                                            checked={filters.accommodationTypes.filter(t => t.id === type.id).length > 0}
+                                            checked={filters.accommodationTypes.filter(t => t.type === type.type).length > 0}
                                             onChange={(e) => {
                                                 const newTypes = e.target.checked
                                                     ? [...filters.accommodationTypes, type]
-                                                    : filters.accommodationTypes.filter(t => t.id !== type.id);
+                                                    : filters.accommodationTypes.filter(t => t.type !== type.type);
                                                 handleFilterChange('accommodationTypes', newTypes);
                                             }}
                                         />
@@ -351,7 +363,7 @@ export default function AccommodationPage() {
                 </Accordion>
                 <Divider sx={{ my: 2 }} />
 
-                <FormControlLabel
+                {/* <FormControlLabel
                     control={
                         <Checkbox
                             checked={filters.hasKidsArea}
@@ -359,7 +371,7 @@ export default function AccommodationPage() {
                         />
                     }
                     label="منطقة أطفال"
-                />
+                /> */}
 
                 <Divider sx={{ my: 2 }} />
 
