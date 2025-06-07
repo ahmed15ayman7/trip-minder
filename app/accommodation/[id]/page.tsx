@@ -27,10 +27,19 @@ import ChildCareIcon from '@mui/icons-material/ChildCare';
 import BedIcon from '@mui/icons-material/Bed';
 import GroupIcon from '@mui/icons-material/Group';
 import { fetchEntertainment, fetchTourismArea, classABCD, AccomodationTypes, fetchRestaurants } from '@/services/api';
+import dynamic from 'next/dynamic';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 let defaultImage = '/images/default.png';
+
+const MapWithNoSSR = dynamic(
+    () => import('@/app/components/Map'),
+    {
+        ssr: false,
+        loading: () => <Box sx={{ height: 400, display: 'flex', justifyContent: 'center', alignItems: 'center' }}><CircularProgress /></Box>
+    }
+);
 
 export interface Accommodation {
     id: number;
@@ -141,7 +150,7 @@ const AccommodationPage = ({ params }: { params: Promise<{ id: string }> }) => {
                         sameClass: classData.data.data.filter((a: Accommodation) => a.id !== response.data.data.id),
                         sameType: typeData.data.data.filter((a: Accommodation) => a.id !== response.data.data.id)
                     });
-                    setRestaurants(restaurantsData.data || []);
+                    setRestaurants(restaurantsData.data.data || []);
                     // تحويل العنوان إلى إحداثيات
                     if (response.data.data.mapLink) {
                         const [lat, lng] = response.data.data.mapLink.split(',').map(Number);
@@ -426,21 +435,7 @@ const AccommodationPage = ({ params }: { params: Promise<{ id: string }> }) => {
                         {/* خريطة الموقع */}
                         {mapPosition && (
                             <Box sx={{ height: 400, mb: 3 }}>
-                                <MapContainer
-                                    center={mapPosition}
-                                    zoom={13}
-                                    style={{ height: '100%', width: '100%' }}
-                                >
-                                    <TileLayer
-                                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                    />
-                                    <Marker position={mapPosition}>
-                                        <Popup>
-                                            {data?.name}
-                                        </Popup>
-                                    </Marker>
-                                </MapContainer>
+                                <MapWithNoSSR position={mapPosition} name={data.name} />
                             </Box>
                         )}
 

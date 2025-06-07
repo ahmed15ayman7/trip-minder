@@ -26,11 +26,21 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import PhoneIcon from '@mui/icons-material/Phone';
 import MapIcon from '@mui/icons-material/Map';
 import ChildCareIcon from '@mui/icons-material/ChildCare';
+import dynamic from 'next/dynamic';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { fetchTourismArea } from '@/services/api';
 import { fetchEntertainment } from '@/services/api';
+
+const MapWithNoSSR = dynamic(
+    () => import('@/app/components/Map'),
+    {
+        ssr: false,
+        loading: () => <Box sx={{ height: 400, display: 'flex', justifyContent: 'center', alignItems: 'center' }}><CircularProgress /></Box>
+    }
+);
+
 let defaultImage = '/images/default.png';
 export interface Entertainment {
     id: number;
@@ -130,7 +140,7 @@ const EntertainmentPage = ({ params }: { params: Promise<{ id: string }> }) => {
                     sameType: typeResponse.data.data.filter((e: Entertainment) => e.id !== entertainmentData.id)
                 });
                 setTourismAreas(tourismAreasResponse.data);
-                setRestaurants(restaurantsResponse.data);
+                setRestaurants(restaurantsResponse.data.data);
                 // تحويل العنوان إلى إحداثيات
                 if (entertainmentData.mapLink) {
                     const [lat, lng] = entertainmentData.mapLink.split(',').map(Number);
@@ -396,21 +406,7 @@ const EntertainmentPage = ({ params }: { params: Promise<{ id: string }> }) => {
                         {/* خريطة الموقع */}
                         {mapPosition && (
                             <Box sx={{ height: 400, mb: 3 }}>
-                                <MapContainer
-                                    center={mapPosition}
-                                    zoom={13}
-                                    style={{ height: '100%', width: '100%' }}
-                                >
-                                    <TileLayer
-                                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                    />
-                                    <Marker position={mapPosition}>
-                                        <Popup>
-                                            {entertainment.name}
-                                        </Popup>
-                                    </Marker>
-                                </MapContainer>
+                                <MapWithNoSSR position={mapPosition} name={entertainment.name} />
                             </Box>
                         )}
 

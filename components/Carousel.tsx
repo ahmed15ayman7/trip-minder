@@ -26,7 +26,7 @@ const Carousel: React.FC = () => {
     useEffect(() => {
         const getData = async () => {
             const result = await fetchGovernorates();
-            if (result.length > 0) {
+            if (result?.length > 0) {
                 setDestinations(result);
             }
         };

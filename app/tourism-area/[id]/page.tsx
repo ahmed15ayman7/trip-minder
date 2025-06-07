@@ -28,9 +28,9 @@ import MapIcon from '@mui/icons-material/Map';
 import ChildCareIcon from '@mui/icons-material/ChildCare';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
 import { fetchTourismArea } from '@/services/api';
 import { fetchEntertainment } from '@/services/api';
+import dynamic from 'next/dynamic';
 let defaultImage = '/images/default.png';
 
 export interface TourismArea {
@@ -78,6 +78,14 @@ let classABCD = {
     "C": 3,
     "D": 4,
 }
+
+const MapWithNoSSR = dynamic(
+    () => import('@/app/components/Map'),
+    {
+        ssr: false,
+        loading: () => <Box sx={{ height: 400, display: 'flex', justifyContent: 'center', alignItems: 'center' }}><CircularProgress /></Box>
+    }
+);
 
 const TourismAreaPage = ({ params }: { params: Promise<{ id: string }> }) => {
     const { id } = use(params);
@@ -134,12 +142,12 @@ const TourismAreaPage = ({ params }: { params: Promise<{ id: string }> }) => {
                     sameClass: classResponse.data.data.filter((e: TourismArea) => e.id !== tourismAreaData.id),
                     sameType: typeResponse.data.data.filter((e: TourismArea) => e.id !== tourismAreaData.id)
                 });
-                setRestaurants(restaurantsResponse.data);
+                setRestaurants(restaurantsResponse.data.data);
                 // تحويل العنوان إلى إحداثيات
                 if (tourismAreaData.mapLink) {
                     const [lat, lng] = tourismAreaData.mapLink.split(',').map(Number);
                     setMapPosition([lat, lng]);
-                } else if (tourismAreaData.address) {
+                } else if (tourismAreaData.address && typeof window !== 'undefined') {
                     const coordinates = await getCoordinatesFromAddress(tourismAreaData.address);
                     if (coordinates) {
                         setMapPosition(coordinates);
@@ -400,21 +408,7 @@ const TourismAreaPage = ({ params }: { params: Promise<{ id: string }> }) => {
                         {/* خريطة الموقع */}
                         {mapPosition && (
                             <Box sx={{ height: 400, mb: 3 }}>
-                                <MapContainer
-                                    center={mapPosition}
-                                    zoom={13}
-                                    style={{ height: '100%', width: '100%' }}
-                                >
-                                    <TileLayer
-                                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                    />
-                                    <Marker position={mapPosition}>
-                                        <Popup>
-                                            {tourismArea.name}
-                                        </Popup>
-                                    </Marker>
-                                </MapContainer>
+                                <MapWithNoSSR position={mapPosition} name={tourismArea.name} />
                             </Box>
                         )}
 
