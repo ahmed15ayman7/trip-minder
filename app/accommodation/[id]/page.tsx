@@ -30,7 +30,7 @@ import { fetchEntertainment, fetchTourismArea, classABCD, AccomodationTypes, fet
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import defaultImage from '@/assets/default.png';
+let defaultImage = '/images/default.png';
 
 export interface Accommodation {
     id: number;

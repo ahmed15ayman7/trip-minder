@@ -31,7 +31,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { fetchTourismArea } from '@/services/api';
 import { fetchEntertainment } from '@/services/api';
-import defaultImage from '@/assets/default.png';
+let defaultImage = '/images/default.png';
 
 export interface TourismArea {
     id: number;
