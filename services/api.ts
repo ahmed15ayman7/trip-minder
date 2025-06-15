@@ -1,7 +1,7 @@
 // services/api.ts
 import axios from "axios";
 
-export const baseUrl = "https://9d06-196-136-72-214.ngrok-free.app/";
+export const baseUrl = "https://55b7-196-153-194-168.ngrok-free.app/";
 export const FoodCategories = {
   Seafood: 1,
   "Grilled Food & Steaks": 2,
